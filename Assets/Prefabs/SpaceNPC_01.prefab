@@ -11,8 +11,10 @@ GameObject:
   - component: {fileID: 8105691456882250420}
   - component: {fileID: 310522124409345168}
   - component: {fileID: 727887392667572011}
+  - component: {fileID: 4936202870960488790}
+  - component: {fileID: 1105654604525795868}
   m_Layer: 0
-  m_Name: SpaceCharacter
+  m_Name: SpaceNPC_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77,7 +79,42 @@ MonoBehaviour:
   thrustForce: 10
   rotationSpeed: 150
   maxSpeed: 15
-  isAI: 0
+  isAI: 1
+--- !u!114 &4936202870960488790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667069528744625763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48f12d65ee3d231458ee390cb21d04df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  planetTransform: {fileID: 0}
+  wanderMinTime: 2
+  wanderMaxTime: 5
+  randomTurnChance: 0.1
+  travelDistance: 50
+  stopThreshold: 0.1
+  jumpDuration: 1
+  jumpSpeedMultiplier: 5
+  rotationAngleThreshold: 10
+  showDebug: 1
+--- !u!114 &1105654604525795868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667069528744625763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8605bf55366276249a72f5c368d5d38b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleUpDuration: 1
 --- !u!1 &2274380859335425377
 GameObject:
   m_ObjectHideFlags: 0
@@ -104,7 +141,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2274380859335425377}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.17072004, y: 0.61109, z: 0.61109}
   m_ConstrainProportionsScale: 0

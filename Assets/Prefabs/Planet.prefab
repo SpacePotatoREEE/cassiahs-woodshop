@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5238610435128329471}
+  - component: {fileID: 9208974343010960167}
   m_Layer: 0
   m_Name: Planet
   m_TagString: Untagged
@@ -32,6 +33,25 @@ Transform:
   - {fileID: 5443109905057787818}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9208974343010960167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3005278338102919026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4525ad403bf7d24fba62e1a958151dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  npcShipPrefab: {fileID: 1667069528744625763, guid: 24f2ecf246d57c94d999d64df07c262d, type: 3}
+  planetTransform: {fileID: 5443109905057787818}
+  minShipsPerSpawn: 1
+  maxShipsPerSpawn: 3
+  minSpawnInterval: 2
+  maxSpawnInterval: 8
+  spawnDistanceFromPlanet: 2
 --- !u!1 &3104159598341502198
 GameObject:
   m_ObjectHideFlags: 0

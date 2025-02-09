@@ -4,53 +4,70 @@ using UnityEngine;
 public class ShipDriftController : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float thrustForce = 10f;         // Acceleration force
-    public float rotationSpeed = 80f;       // Yaw rotation speed
-    public float maxSpeed = 50f;           // Optional max speed (set high or remove if you want infinite)
+    public float thrustForce = 10f;
+    public float rotationSpeed = 80f;
+    public float maxSpeed = 50f;
+
+    [Header("AI Override")]
+    public bool isAI = false;
+    private float aiHorizontal = 0f;
+    private float aiVertical = 0f;
 
     private Rigidbody rb;
-
-    // Inputs stored each frame
     private float horizontalInput;
     private float verticalInput;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        // Ensure the Rigidbody won't slow down automatically
         rb.linearDamping = 0f;
         rb.angularDamping = 0f;
         rb.useGravity = false;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
-        // Freeze rotation on X/Z if you only want yaw rotation (top-down style)
+
+        // Only freeze rotation X/Z for top-down. Leave Y free.
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
 
     private void Update()
     {
-        // Gather input
-        horizontalInput = Input.GetAxis("Horizontal");  // A/D or Left/Right
-        verticalInput   = Input.GetAxis("Vertical");    // W/S or Up/Down
+        if (!isAI)
+        {
+            horizontalInput = Input.GetAxis("Horizontal");
+            verticalInput   = Input.GetAxis("Vertical");
+        }
+        else
+        {
+            horizontalInput = aiHorizontal;
+            verticalInput   = aiVertical;
+        }
     }
 
     private void FixedUpdate()
     {
-        // 1. Rotate the ship (yaw)
+        // Rotate around Y
         float rotationAmount = horizontalInput * rotationSpeed * Time.fixedDeltaTime;
         Quaternion newRot = rb.rotation * Quaternion.Euler(0f, rotationAmount, 0f);
         rb.MoveRotation(newRot);
 
-        // 2. Thrust forward/back
+        // Thrust
         if (Mathf.Abs(verticalInput) > 0.01f)
         {
-            Vector3 force = transform.forward * -1 * verticalInput * thrustForce;
+            // Here we treat "forward" as negative Z
+            Vector3 force = transform.forward * -1f * verticalInput * thrustForce;
             rb.AddForce(force, ForceMode.Acceleration);
         }
 
-        // 3. (Optional) Cap max speed
+        // Cap speed
         if (rb.linearVelocity.magnitude > maxSpeed)
         {
             rb.linearVelocity = rb.linearVelocity.normalized * maxSpeed;
         }
+    }
+
+    public void SetAIInputs(float aiH, float aiV)
+    {
+        aiHorizontal = aiH;
+        aiVertical   = aiV;
     }
 }

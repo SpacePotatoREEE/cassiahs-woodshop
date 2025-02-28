@@ -41,7 +41,7 @@ public class AIWeaponController : MonoBehaviour
     private void Update()
     {
         fireTimer -= Time.deltaTime;
-
+/*
         if ( homingBullet && playerTransform != null)
         {
             // We'll just call FireAt each frame or once in a while
@@ -50,7 +50,7 @@ public class AIWeaponController : MonoBehaviour
                 FireAt(playerTransform);
                 fireTimer = 1f / fireRate;
             }
-        }
+        }*/
     }
 
     public void FireAt(Transform target)

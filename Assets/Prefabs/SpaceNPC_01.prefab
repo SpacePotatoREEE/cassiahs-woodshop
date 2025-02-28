@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thrustForce: 5
-  rotationSpeed: 60
+  rotationSpeed: 120
   maxSpeed: 8
   isAI: 1
 --- !u!114 &453596044527740578
@@ -149,6 +149,7 @@ MonoBehaviour:
   finalExplosionDuration: 0.5
   aiWeaponController: {fileID: 453596044527740578}
   playerTransform: {fileID: 7211685714230090724}
+  fireRate: 1
   attackDistanceMin: 5
   attackDistanceMax: 10
   attackThrustFactor: 1

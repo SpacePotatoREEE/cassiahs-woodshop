@@ -35,6 +35,9 @@ public class NPCShipAI : MonoBehaviour
     public AIWeaponController aiWeaponController;
     [Tooltip("The player's transform (the target).")]
     public Transform playerTransform;
+    [Tooltip("Shots per second")]
+    public float fireRate = 1f;
+    private float fireTimer = 0f;
 
     [Tooltip("Minimum distance the AI wants to maintain from the player.")]
     public float attackDistanceMin = 5f;
@@ -50,6 +53,8 @@ public class NPCShipAI : MonoBehaviour
     private ShipDriftController ship;
     private Rigidbody rb;
     private EnemySpaceShip enemyShip;
+
+    private GameObject player;
 
     private float normalThrustForce;
     private float normalRotationSpeed;
@@ -101,6 +106,25 @@ public class NPCShipAI : MonoBehaviour
 
         meshRenderers = GetComponentsInChildren<MeshRenderer>();
         shipColliders = GetComponentsInChildren<Collider>();
+        
+        // Attempt to find the player by tag
+        player = GameObject.FindWithTag("Player");
+        if (player == null)
+        {
+            Debug.LogWarning("[AIWeaponController] No GameObject found with tag 'Player'!");
+        }
+        else
+        {
+            // Safety check: if the object we found is ourselves, that's a problem
+            if (player == this.gameObject)
+            {
+                Debug.LogError("[AIWeaponController] Found 'player' is this same object! Check your tags.");
+            }
+            else
+            {
+                playerTransform = player.transform;
+            }
+        }
     }
 
     private void Start()
@@ -144,14 +168,14 @@ public class NPCShipAI : MonoBehaviour
     // --------------------------------------
     private void AttackUpdate()
     {
-        if (aiWeaponController == null || playerTransform == null)
+        if (aiWeaponController == null || player == null)
         {
             // fallback: do nothing
             return;
         }
 
         // Check if the player is disabled or destroyed
-        PlayerSpaceShipStats playerStats = playerTransform.GetComponent<PlayerSpaceShipStats>();
+        PlayerSpaceShipStats playerStats = player.GetComponent<PlayerSpaceShipStats>();
         if (playerStats != null && playerStats.IsDisabledOrDestroyed())
         {
             // If the player is disabled, revert to Cruise
@@ -162,7 +186,7 @@ public class NPCShipAI : MonoBehaviour
         }
 
         // 1) Move/rotate to maintain finalAttackDistance from the player
-        Vector3 toPlayer = (playerTransform.position - transform.position);
+        Vector3 toPlayer = (player.transform.position - transform.position);
         float dist = toPlayer.magnitude;
 
         if (dist > finalAttackDistance + 1f)
@@ -183,8 +207,13 @@ public class NPCShipAI : MonoBehaviour
             HoldPosition();
         }
 
+        fireTimer -= Time.deltaTime;
         // 2) Fire at the player
-        aiWeaponController.FireAt(playerTransform);
+        if (fireTimer <= 0f)
+        {
+            aiWeaponController.FireAt(player.transform);
+            fireTimer = 1f / fireRate;
+        }
     }
 
     /// <summary> Turn & thrust TOWARD the target position. </summary>

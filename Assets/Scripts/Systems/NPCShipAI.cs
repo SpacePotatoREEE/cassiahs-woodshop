@@ -30,10 +30,10 @@ public class NPCShipAI : MonoBehaviour
     public float destroyingParticleDuration = 2f;
     public GameObject finalExplosionPrefab;
     public float finalExplosionDuration = 1f;
-    
+
     [Header("Attack Settings")]
     public AIWeaponController aiWeaponController;
-    [Tooltip("The player's transform (the target).")]
+    [Tooltip("Reference to the player’s transform (the target).")]
     public Transform playerTransform;
     [Tooltip("Shots per second")]
     public float fireRate = 1f;
@@ -61,20 +61,31 @@ public class NPCShipAI : MonoBehaviour
     private float chosenExtraDistance;
     private bool isAttacking = false;
 
-    private enum State
+    private MeshRenderer[] meshRenderers;
+    private Collider[] shipColliders;
+
+    // ========== TOP-LEVEL STATES ==========
+    private enum PrimaryState
+    {
+        Normal,     // We'll run secondary states here (Cruise, Jumpable, etc.)
+        Attack,
+        Disabled,
+        Destroying,
+        Despawn
+    }
+    private PrimaryState primaryState = PrimaryState.Normal;
+
+    // ========== SUB-STATES WHEN Normal ==========
+    private enum SecondaryState
     {
         Cruise,
         Jumpable,
         PrepareJump,
-        IsJumping,
-        Disabled,
-        Destroying,
-        Attack,
-        Despawn
+        IsJumping
     }
-    private State currentState = State.Cruise;
+    private SecondaryState secondaryState = SecondaryState.Cruise;
 
-    // Timers
+    // Timers for wandering / jumping
     private float wanderTimer;
     private float jumpTimer;
 
@@ -82,15 +93,11 @@ public class NPCShipAI : MonoBehaviour
     private float currentHorizontal;
     private float currentVertical;
 
-    // Disabled
+    // For disabling
     private float disabledTimer;
     private Vector3 initialVel;
 
-    // For visuals
-    private MeshRenderer[] meshRenderers;
-    private Collider[] shipColliders;
-
-    // The final distance we want to maintain from the player (picked randomly once).
+    // Attack distance
     private float finalAttackDistance;
 
     private void Awake()
@@ -104,24 +111,26 @@ public class NPCShipAI : MonoBehaviour
         normalThrustForce   = ship.thrustForce;
         normalRotationSpeed = ship.rotationSpeed;
 
+        // gather child mesh & colliders for disabling
         meshRenderers = GetComponentsInChildren<MeshRenderer>();
         shipColliders = GetComponentsInChildren<Collider>();
         
         // Attempt to find the player by tag
-        player = GameObject.FindWithTag("Player");
-        if (player == null)
+        GameObject potentialPlayer = GameObject.FindWithTag("Player");
+        if (potentialPlayer == null)
         {
-            Debug.LogWarning("[AIWeaponController] No GameObject found with tag 'Player'!");
+            Debug.LogWarning("[NPCShipAI] No GameObject found with tag 'Player'!");
         }
         else
         {
-            // Safety check: if the object we found is ourselves, that's a problem
-            if (player == this.gameObject)
+            // Safety check: if it's ourselves, that's a problem
+            if (potentialPlayer == this.gameObject)
             {
-                Debug.LogError("[AIWeaponController] Found 'player' is this same object! Check your tags.");
+                Debug.LogError("[NPCShipAI] Found 'player' is this same object! Check your tags.");
             }
             else
             {
+                player = potentialPlayer;
                 playerTransform = player.transform;
             }
         }
@@ -134,180 +143,60 @@ public class NPCShipAI : MonoBehaviour
 
     private void FixedUpdate()
     {
-        switch (currentState)
+        switch (primaryState)
         {
-            case State.Cruise:      CruiseUpdate();      break;
-            case State.Jumpable:    JumpableUpdate();    break;
-            case State.PrepareJump: PrepareJumpUpdate(); break;
-            case State.IsJumping:   IsJumpingUpdate();   break;
-            case State.Disabled:    DisabledUpdate();    break;
-            case State.Destroying:  /* handled by coroutine */ break;
-            case State.Attack:      AttackUpdate();      break;
-            case State.Despawn:     Destroy(gameObject); break;
+            case PrimaryState.Attack:
+                AttackUpdate();
+                break;
+            case PrimaryState.Disabled:
+                DisabledUpdate();
+                break;
+            case PrimaryState.Destroying:
+                // do nothing here (no secondary states)
+                break;
+            case PrimaryState.Despawn:
+                Destroy(gameObject);
+                break;
+            case PrimaryState.Normal:
+            default:
+                // run the normal sub-state machine
+                RunSecondaryState();
+                break;
         }
     }
 
-    // --------------------------------------
-    //  PUBLIC: ENTER ATTACK STATE
-    // --------------------------------------
+    //=========================================
+    //  PRIMARY STATES
+    //=========================================
+
     public void EnterAttackState()
     {
-        if (currentState == State.Disabled || currentState == State.Despawn)
+        // If we are already disabled, destroying or despawn => skip
+        if (primaryState == PrimaryState.Disabled
+         || primaryState == PrimaryState.Destroying
+         || primaryState == PrimaryState.Despawn)
+        {
             return;
+        }
 
-        currentState = State.Attack;
+        primaryState = PrimaryState.Attack;
         isAttacking = true;
 
-        // Pick a random "final distance" to maintain
         finalAttackDistance = Random.Range(attackDistanceMin, attackDistanceMax);
-        Debug.Log($"[NPCShipAI] Attack state! Maintaining distance ~{finalAttackDistance:F1}");
+        Debug.Log($"[NPCShipAI] Attack state! distance ~{finalAttackDistance:F1}");
     }
 
-    // --------------------------------------
-    //  ATTACK LOGIC
-    // --------------------------------------
-    private void AttackUpdate()
-    {
-        if (aiWeaponController == null || player == null)
-        {
-            // fallback: do nothing
-            return;
-        }
-
-        // Check if the player is disabled or destroyed
-        PlayerSpaceShipStats playerStats = player.GetComponent<PlayerSpaceShipStats>();
-        if (playerStats != null && playerStats.IsDisabledOrDestroyed())
-        {
-            // If the player is disabled, revert to Cruise
-            Debug.Log("[NPCShipAI] Player is disabled, stopping attack => Cruise");
-            isAttacking = false;
-            currentState = State.Cruise;
-            return;
-        }
-
-        // 1) Move/rotate to maintain finalAttackDistance from the player
-        Vector3 toPlayer = (player.transform.position - transform.position);
-        float dist = toPlayer.magnitude;
-
-        if (dist > finalAttackDistance + 1f)
-        {
-            // We are too far: move forward to close in
-            //  => rotate to face player, apply forward thrust
-            ApproachTarget(playerTransform.position);
-        }
-        else if (dist < finalAttackDistance - 1f)
-        {
-            // We are too close: back away or brake to near zero
-            // => rotate 180 from player, apply forward to reverse
-            BackAwayFromTarget(playerTransform.position);
-        }
-        else
-        {
-            // We are within the "comfort zone" => just brake slightly to keep velocity near 0
-            HoldPosition();
-        }
-
-        fireTimer -= Time.deltaTime;
-        // 2) Fire at the player
-        if (fireTimer <= 0f)
-        {
-            aiWeaponController.FireAt(player.transform);
-            fireTimer = 1f / fireRate;
-        }
-    }
-
-    /// <summary> Turn & thrust TOWARD the target position. </summary>
-    private void ApproachTarget(Vector3 targetPos)
-    {
-        // 1) Aim
-        Vector3 dir = (targetPos - transform.position);
-        dir.y = 0f; // top-down+
-        dir.Normalize();
-
-        // Turn towards that direction
-        TurnTowards(dir);
-
-        // Apply forward thrust: we do a partial factor
-        float forwardInput = 1f * attackThrustFactor;
-        ship.SetAIInputs(currentHorizontal, forwardInput);
-    }
-
-    /// <summary> Turn & thrust AWAY from the target position (to back up). </summary>
-    private void BackAwayFromTarget(Vector3 targetPos)
-    {
-        Vector3 dirToTarget = (targetPos - transform.position);
-        dirToTarget.y = 0f;
-        dirToTarget.Normalize();
-
-        // Opposite direction
-        Vector3 awayDir = -dirToTarget;
-
-        // Turn towards awayDir
-        TurnTowards(awayDir);
-
-        // full forward input => physically "reverse"
-        float forwardInput = 1f * attackThrustFactor;
-        ship.SetAIInputs(currentHorizontal, forwardInput);
-    }
-
-    /// <summary> Brake to near zero by reversing velocity. </summary>
-    private void HoldPosition()
-    {
-        // read velocity
-        Vector3 velocity = rb.linearVelocity;
-        float speed = velocity.magnitude;
-
-        if (speed < 0.2f)
-        {
-            // Already basically still => no input
-            ship.SetAIInputs(0f, 0f);
-            return;
-        }
-
-        // otherwise, turn opposite velocity & apply forward => brake
-        Vector3 brakeDir = -velocity.normalized;
-        TurnTowards(brakeDir);
-        float forwardInput = 1f;
-        ship.SetAIInputs(currentHorizontal, forwardInput);
-    }
-
-    /// <summary> Utility: Turn smoothly towards a desired direction. </summary>
-    private void TurnTowards(Vector3 desiredDir)
-    {
-        desiredDir.y = 0f;
-        if (desiredDir.sqrMagnitude < 0.001f) return;
-
-        // Our "forward" is negative Z in ShipDriftController
-        Vector3 currentForward = -transform.forward;
-        float signedAngle = Vector3.SignedAngle(currentForward, desiredDir, Vector3.up);
-
-        float h;
-        if (signedAngle > 5f)      h =  1f;
-        else if (signedAngle < -5f)h = -1f;
-        else                       h =  0f;
-
-        currentHorizontal = h;
-
-        // Also forcibly rotate for immediate turning
-        float step = ship.rotationSpeed * Time.fixedDeltaTime;
-        Quaternion currentRot = rb.rotation;
-        Quaternion targetRot  = Quaternion.LookRotation(-desiredDir, Vector3.up); 
-        // note the negative if your forward is -Z
-        Quaternion newRot     = Quaternion.RotateTowards(currentRot, targetRot, step);
-        rb.MoveRotation(newRot);
-    }
-
-    // --------------------------------------
-    // DISABLED / DESTROYING (unchanged)
-    // --------------------------------------
     public void EnterDisabledState()
     {
-        if (currentState == State.Disabled || currentState == State.Destroying || currentState == State.Despawn)
+        // If we're already disabled/destroying/despawn => skip
+        if (primaryState == PrimaryState.Disabled
+         || primaryState == PrimaryState.Destroying
+         || primaryState == PrimaryState.Despawn)
+        {
             return;
+        }
 
-        currentState = State.Disabled;
-
-        // Mark the ship as disabled so targetingIndicator can't re‐enable
+        primaryState = PrimaryState.Disabled;
         if (enemyShip != null)
         {
             enemyShip.isDisabled = true;
@@ -322,6 +211,70 @@ public class NPCShipAI : MonoBehaviour
         ship.SetAIInputs(0f, 0f);
     }
 
+    public void EnterDestroyingState()
+    {
+        if (primaryState == PrimaryState.Destroying || primaryState == PrimaryState.Despawn)
+            return;
+
+        primaryState = PrimaryState.Destroying;
+        if (enemyShip != null && enemyShip.disabledIndicator != null)
+            enemyShip.disabledIndicator.SetActive(false);
+
+        rb.linearVelocity = Vector3.zero;
+        ship.SetAIInputs(0f, 0f);
+        StartCoroutine(DestroySequence());
+    }
+
+    // AttackUpdate: Remains in Attack unless we forcibly leave it
+    private void AttackUpdate()
+    {
+        if (aiWeaponController == null || player == null)
+        {
+            // no target => do nothing, but remain in Attack if you want
+            return;
+        }
+
+        // optional check if the AI's own HP is low => disabled
+        // if (enemyShip != null && some condition) EnterDisabledState();
+
+        // 1) Check if Player is truly disabled/destroyed
+        PlayerSpaceShipStats pStats = player.GetComponent<PlayerSpaceShipStats>();
+        // If we REALLY want to revert to Normal if player is disabled, we keep this check
+        if (pStats != null && pStats.IsDisabledOrDestroyed())
+        {
+            Debug.Log("[NPCShipAI] Player truly disabled => revert to Normal/Cruise");
+            isAttacking = false;
+            primaryState = PrimaryState.Normal;
+            secondaryState = SecondaryState.Cruise;
+            return;
+        }
+
+        // 2) Move to maintain distance
+        Vector3 toPlayer = (player.transform.position - transform.position);
+        float dist = toPlayer.magnitude;
+
+        if (dist > finalAttackDistance + 1f)
+        {
+            ApproachTarget(playerTransform.position);
+        }
+        else if (dist < finalAttackDistance - 1f)
+        {
+            BackAwayFromTarget(playerTransform.position);
+        }
+        else
+        {
+            HoldPosition();
+        }
+
+        // 3) Shoot
+        fireTimer -= Time.deltaTime;
+        if (fireTimer <= 0f)
+        {
+            aiWeaponController.FireAt(player.transform);
+            fireTimer = 1f / fireRate;
+        }
+    }
+
     private void DisabledUpdate()
     {
         disabledTimer += Time.fixedDeltaTime;
@@ -333,27 +286,8 @@ public class NPCShipAI : MonoBehaviour
         ship.SetAIInputs(0f, 0f);
     }
 
-    public void EnterDestroyingState()
-    {
-        if (currentState == State.Destroying || currentState == State.Despawn)
-            return;
-
-        currentState = State.Destroying;
-
-        // turn off disabled indicator if it was on
-        if (enemyShip != null && enemyShip.disabledIndicator != null)
-        {
-            enemyShip.disabledIndicator.SetActive(false);
-        }
-
-        rb.linearVelocity = Vector3.zero;
-        ship.SetAIInputs(0f, 0f);
-        StartCoroutine(DestroySequence());
-    }
-
     private IEnumerator DestroySequence()
     {
-        // spawn "destroying" effect
         GameObject destroyingFX = null;
         if (destroyingParticlePrefab != null)
         {
@@ -362,21 +296,16 @@ public class NPCShipAI : MonoBehaviour
         }
 
         yield return new WaitForSeconds(destroyingParticleDuration);
-
         if (destroyingFX != null) Destroy(destroyingFX);
 
-        // final explosion
         GameObject explosionFX = null;
         if (finalExplosionPrefab != null)
-        {
             explosionFX = Instantiate(finalExplosionPrefab, transform.position, Quaternion.identity);
-        }
 
         DisableShipVisuals();
-
         yield return new WaitForSeconds(finalExplosionDuration);
 
-        currentState = State.Despawn;
+        primaryState = PrimaryState.Despawn;
     }
 
     private void DisableShipVisuals()
@@ -393,22 +322,32 @@ public class NPCShipAI : MonoBehaviour
         }
     }
 
-    // --------------------------------------
-    // CRUISE / JUMPABLE / PREPAREJUMP / ISJUMPING
-    // (unchanged from your script)
-    // --------------------------------------
-    private float wanderTimerRemaining;
+    //=========================================
+    //  SECONDARY STATES (only run in Normal)
+    //=========================================
+    private void RunSecondaryState()
+    {
+        switch (secondaryState)
+        {
+            case SecondaryState.Cruise:      CruiseUpdate();      break;
+            case SecondaryState.Jumpable:    JumpableUpdate();    break;
+            case SecondaryState.PrepareJump: PrepareJumpUpdate(); break;
+            case SecondaryState.IsJumping:   IsJumpingUpdate();   break;
+        }
+    }
+
     private void CruiseUpdate()
     {
         if (planetTransform == null)
         {
-            currentState = State.Despawn;
+            primaryState = PrimaryState.Despawn;
             return;
         }
+
         float dist = Vector3.Distance(transform.position, planetTransform.position);
         if (dist > jumpableDistance)
         {
-            currentState = State.Jumpable;
+            secondaryState = SecondaryState.Jumpable;
             chosenExtraDistance = Random.Range(minExtraDistance, maxExtraDistance);
             return;
         }
@@ -419,13 +358,13 @@ public class NPCShipAI : MonoBehaviour
     {
         if (planetTransform == null)
         {
-            currentState = State.Despawn;
+            primaryState = PrimaryState.Despawn;
             return;
         }
         float dist = Vector3.Distance(transform.position, planetTransform.position);
         if (dist > jumpableDistance + chosenExtraDistance)
         {
-            currentState = State.PrepareJump;
+            secondaryState = SecondaryState.PrepareJump;
             return;
         }
         HandleWandering();
@@ -442,7 +381,7 @@ public class NPCShipAI : MonoBehaviour
             ship.SetAIInputs(0f, 0f);
 
             jumpTimer = jumpDuration;
-            currentState = State.IsJumping;
+            secondaryState = SecondaryState.IsJumping;
             return;
         }
 
@@ -462,7 +401,7 @@ public class NPCShipAI : MonoBehaviour
         jumpTimer -= Time.fixedDeltaTime;
         if (jumpTimer <= 0f)
         {
-            currentState = State.Despawn;
+            primaryState = PrimaryState.Despawn;
             return;
         }
 
@@ -470,6 +409,72 @@ public class NPCShipAI : MonoBehaviour
         ship.thrustForce   = normalThrustForce   * jumpSpeedMultiplier;
         ship.rotationSpeed = normalRotationSpeed * jumpSpeedMultiplier;
         ship.SetAIInputs(0f, 1f);
+    }
+
+    //=========================================
+    //  Movement Helpers for Attack
+    //=========================================
+    private void ApproachTarget(Vector3 targetPos)
+    {
+        Vector3 dir = (targetPos - transform.position);
+        dir.y = 0f;
+        dir.Normalize();
+
+        TurnTowards(dir);
+        float forwardInput = 1f * attackThrustFactor;
+        ship.SetAIInputs(currentHorizontal, forwardInput);
+    }
+
+    private void BackAwayFromTarget(Vector3 targetPos)
+    {
+        Vector3 dirToTarget = (targetPos - transform.position);
+        dirToTarget.y = 0f;
+        dirToTarget.Normalize();
+
+        Vector3 awayDir = -dirToTarget;
+        TurnTowards(awayDir);
+
+        float forwardInput = 1f * attackThrustFactor;
+        ship.SetAIInputs(currentHorizontal, forwardInput);
+    }
+
+    private void HoldPosition()
+    {
+        Vector3 velocity = rb.linearVelocity;
+        float speed = velocity.magnitude;
+
+        if (speed < 0.2f)
+        {
+            ship.SetAIInputs(0f, 0f);
+            return;
+        }
+
+        Vector3 brakeDir = -velocity.normalized;
+        TurnTowards(brakeDir);
+        float forwardInput = 1f;
+        ship.SetAIInputs(currentHorizontal, forwardInput);
+    }
+
+    private void TurnTowards(Vector3 desiredDir)
+    {
+        desiredDir.y = 0f;
+        if (desiredDir.sqrMagnitude < 0.001f) return;
+
+        Vector3 currentForward = -transform.forward;
+        float signedAngle = Vector3.SignedAngle(currentForward, desiredDir, Vector3.up);
+
+        float h;
+        if      (signedAngle > 5f)  h =  1f;
+        else if (signedAngle < -5f) h = -1f;
+        else                        h =  0f;
+
+        currentHorizontal = h;
+
+        float step = ship.rotationSpeed * Time.fixedDeltaTime;
+        Quaternion currentRot = rb.rotation;
+        Quaternion targetRot  = Quaternion.LookRotation(-desiredDir, Vector3.up);
+        Quaternion newRot     = Quaternion.RotateTowards(currentRot, targetRot, step);
+        rb.MoveRotation(newRot);
     }
 
     private void HandleWandering()
@@ -497,22 +502,20 @@ public class NPCShipAI : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (!showDebug) return;
-        Gizmos.color = GetStateColor(currentState);
+        Gizmos.color = GetPrimaryStateColor(primaryState);
         Gizmos.DrawWireSphere(transform.position, debugRadius);
     }
 
-    private Color GetStateColor(State s)
+    private Color GetPrimaryStateColor(PrimaryState s)
     {
         switch (s)
         {
-            case State.Cruise:      return Color.green;
-            case State.Jumpable:    return Color.yellow;
-            case State.PrepareJump: return Color.blue;
-            case State.IsJumping:   return Color.gray;
-            case State.Disabled:    return Color.magenta;
-            case State.Destroying:  return Color.black;
-            case State.Attack:      return Color.red;
-            default:                return Color.white;
+            case PrimaryState.Normal:     return Color.green;
+            case PrimaryState.Attack:     return Color.red;
+            case PrimaryState.Disabled:   return Color.magenta;
+            case PrimaryState.Destroying: return Color.black;
+            case PrimaryState.Despawn:    return Color.gray;
+            default:                      return Color.white;
         }
     }
 }

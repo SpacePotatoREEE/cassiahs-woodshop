@@ -1,5 +1,8 @@
 using UnityEngine;
+using System.Collections;
+using UnityEngine.UIElements;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerSpaceShipStats : MonoBehaviour
 {
     [Header("Player Health Settings")]
@@ -11,18 +14,35 @@ public class PlayerSpaceShipStats : MonoBehaviour
     [Range(0f, 1f)]
     public float disableShipAtPercent = 0.3f;
 
-    // Example: If you want to slow down once disabled
+    [Header("Disable Behavior")]
+    [Tooltip("If true, we disable the movement script when disabled.")]
+    public bool disableMovement = true;
+
+    [Tooltip("If true, we disable the weapon script when disabled.")]
+    public bool disableWeapon = true;
+
+    [Tooltip("Slowdown duration after entering disabled.")]
     public float slowDownDuration = 2f;
 
-    // Track whether we’re disabled or destroyed
+    [Header("References")]
+    [Tooltip("Optional movement script (e.g., ShipDriftController) to disable.")]
+    public MonoBehaviour movementScript;
+
+    [Tooltip("Optional weapon script (e.g., PlayerWeaponController) to disable.")]
+    public MonoBehaviour weaponScript;
+
+    // Internal state
     private bool isDisabled = false;
     private bool isDestroyed = false;
 
     private Rigidbody rb;
+    
+    public PlayerHealthBar playerHealthBar;
 
     private void Awake()
     {
         currentHealth = maxHealth;
+        playerHealthBar.SetMaxHealth(maxHealth);
         rb = GetComponent<Rigidbody>();
     }
 
@@ -31,6 +51,7 @@ public class PlayerSpaceShipStats : MonoBehaviour
         if (isDestroyed) return; // Already destroyed
 
         currentHealth -= dmg;
+        playerHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0f)
         {
             currentHealth = 0f;
@@ -39,6 +60,7 @@ public class PlayerSpaceShipStats : MonoBehaviour
         }
 
         float hpPercent = currentHealth / maxHealth;
+        // If not yet disabled, but HP < threshold => disable
         if (!isDisabled && hpPercent < disableShipAtPercent)
         {
             EnterDisabledState();
@@ -47,27 +69,36 @@ public class PlayerSpaceShipStats : MonoBehaviour
 
     private void Die()
     {
-        // If you want to do a final blow-up or fade out:
         Debug.Log("[PlayerSpaceShipStats] Player died!");
         isDestroyed = true;
-        // Possibly remove control, spawn effect, etc.
-        // For now, just do:
+        // You can do an explosion or final effect, then remove the player:
         Destroy(gameObject);
     }
 
     private void EnterDisabledState()
     {
         isDisabled = true;
-        Debug.Log("[PlayerSpaceShipStats] Player is disabled.");
-        // Example slow-down logic:
+        Debug.Log("[PlayerSpaceShipStats] Player is now disabled!");
+
+        // 1) Stop movement & weapon scripts
+        if (disableMovement && movementScript != null)
+        {
+            movementScript.enabled = false;  // This prevents any further movement
+        }
+        if (disableWeapon && weaponScript != null)
+        {
+            weaponScript.enabled = false;    // This prevents firing
+        }
+
+        // 2) Optionally do a slowdown if we're in motion
         StartCoroutine(SlowDownRoutine());
-        // Also stop input from your movement script, if needed
     }
 
-    private System.Collections.IEnumerator SlowDownRoutine()
+    private IEnumerator SlowDownRoutine()
     {
         Vector3 startVel = rb ? rb.linearVelocity : Vector3.zero;
         float timer = 0f;
+
         while (timer < slowDownDuration)
         {
             timer += Time.deltaTime;
@@ -75,8 +106,9 @@ public class PlayerSpaceShipStats : MonoBehaviour
             if (rb) rb.linearVelocity = Vector3.Lerp(startVel, Vector3.zero, t);
             yield return null;
         }
-        // Fully stopped
+
         if (rb) rb.linearVelocity = Vector3.zero;
+        // At this point, the player is fully immobile and cannot shoot or move.
     }
 
     public bool IsDisabledOrDestroyed()

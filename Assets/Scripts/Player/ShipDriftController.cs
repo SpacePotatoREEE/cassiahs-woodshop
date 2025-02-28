@@ -25,7 +25,7 @@ public class ShipDriftController : MonoBehaviour
         rb.useGravity = false;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
 
-        // Only freeze rotation X/Z for top-down. Leave Y free.
+        // Freeze rotation X & Z for top-down
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
 
@@ -33,11 +33,13 @@ public class ShipDriftController : MonoBehaviour
     {
         if (!isAI)
         {
+            // Player input
             horizontalInput = Input.GetAxis("Horizontal");
             verticalInput   = Input.GetAxis("Vertical");
         }
         else
         {
+            // AI input
             horizontalInput = aiHorizontal;
             verticalInput   = aiVertical;
         }
@@ -46,14 +48,14 @@ public class ShipDriftController : MonoBehaviour
     private void FixedUpdate()
     {
         // Rotate around Y
-        float rotationAmount = horizontalInput * rotationSpeed * Time.fixedDeltaTime;
-        Quaternion newRot = rb.rotation * Quaternion.Euler(0f, rotationAmount, 0f);
+        float rotAmount = horizontalInput * rotationSpeed * Time.fixedDeltaTime;
+        Quaternion newRot = rb.rotation * Quaternion.Euler(0f, rotAmount, 0f);
         rb.MoveRotation(newRot);
 
-        // Thrust
+        // Thrust forward
         if (Mathf.Abs(verticalInput) > 0.01f)
         {
-            // Here we treat "forward" as negative Z
+            // "Forward" is negative Z
             Vector3 force = transform.forward * -1f * verticalInput * thrustForce;
             rb.AddForce(force, ForceMode.Acceleration);
         }

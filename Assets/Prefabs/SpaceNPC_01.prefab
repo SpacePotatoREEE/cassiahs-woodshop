@@ -136,9 +136,9 @@ MonoBehaviour:
   jumpableDistance: 50
   minExtraDistance: 5
   maxExtraDistance: 15
-  maxVelocityToJump: 0.2
+  maxVelocityToJump: 0.1
   jumpDuration: 3
-  jumpSpeedMultiplier: 4
+  jumpSpeedMultiplier: 8
   wanderMinTime: 2
   wanderMaxTime: 10
   randomTurnChance: 0.06

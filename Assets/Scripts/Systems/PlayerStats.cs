@@ -3,11 +3,11 @@ using System.Collections;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerSpaceShipStats : MonoBehaviour
+public class PlayerStats : MonoBehaviour
 {
     [Header("Player Health Settings")]
     public float maxHealth = 100f;
-    private float currentHealth;
+    public float currentHealth;
 
     [Header("Disable Threshold")]
     [Tooltip("If health < disableShipAtPercent * maxHealth, we consider this ship 'disabled'.")]
@@ -44,6 +44,9 @@ public class PlayerSpaceShipStats : MonoBehaviour
         currentHealth = maxHealth;
         playerHealthBar.SetMaxHealth(maxHealth);
         rb = GetComponent<Rigidbody>();
+
+        // Make this player persist across scene loads
+        DontDestroyOnLoad(gameObject);
     }
 
     public void TakeDamage(float dmg)
@@ -51,6 +54,7 @@ public class PlayerSpaceShipStats : MonoBehaviour
         if (isDestroyed) return; // Already destroyed
 
         currentHealth -= dmg;
+        Debug.Log($"Player took {dmg} damage. Current health: {currentHealth} / {maxHealth}");
         playerHealthBar.SetHealth(currentHealth);
         if (currentHealth <= 0f)
         {
@@ -66,12 +70,20 @@ public class PlayerSpaceShipStats : MonoBehaviour
             EnterDisabledState();
         }
     }
+    
+    // Example: a method to heal
+    public void Heal(float amount)
+    {
+        currentHealth += amount;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        Debug.Log($"Player healed {amount}. Current health: {currentHealth} / {maxHealth}");
+    }
 
     private void Die()
     {
         Debug.Log("[PlayerSpaceShipStats] Player died!");
         isDestroyed = true;
-        // You can do an explosion or final effect, then remove the player:
+        // Destroys the persistent player
         Destroy(gameObject);
     }
 

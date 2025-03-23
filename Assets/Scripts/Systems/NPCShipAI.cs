@@ -238,7 +238,7 @@ public class NPCShipAI : MonoBehaviour
         // if (enemyShip != null && some condition) EnterDisabledState();
 
         // 1) Check if Player is truly disabled/destroyed
-        PlayerSpaceShipStats pStats = player.GetComponent<PlayerSpaceShipStats>();
+        PlayerStats pStats = player.GetComponent<PlayerStats>();
         // If we REALLY want to revert to Normal if player is disabled, we keep this check
         if (pStats != null && pStats.IsDisabledOrDestroyed())
         {

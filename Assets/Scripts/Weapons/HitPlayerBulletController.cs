@@ -139,7 +139,7 @@ public class HitPlayerBulletController : MonoBehaviour
             return;
 
         // Ok, it's an enemy. Proceed with damage logic
-        PlayerSpaceShipStats player = other.GetComponent<PlayerSpaceShipStats>();
+        PlayerStats player = other.GetComponent<PlayerStats>();
         if (player != null)
         {
             player.TakeDamage(damage);

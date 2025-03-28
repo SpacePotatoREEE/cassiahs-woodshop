@@ -7,12 +7,15 @@ public class PlanetLandingTrigger : MonoBehaviour
 
     [Header("Scene to Load")]
     [SerializeField] private string planetSceneName = "PlanetScene";
+    
+    [Header("String to trigger UI")]
+    [SerializeField] private string layerTriggerString = "PlayerShip";
 
     private bool playerInRange = false;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (other.gameObject.layer == LayerMask.NameToLayer(layerTriggerString))
         {
             if (planetLandingUI != null)
                 planetLandingUI.SetActive(true);
@@ -22,7 +25,7 @@ public class PlanetLandingTrigger : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (other.gameObject.layer == LayerMask.NameToLayer(layerTriggerString))
         {
             if (planetLandingUI != null)
                 planetLandingUI.SetActive(false);

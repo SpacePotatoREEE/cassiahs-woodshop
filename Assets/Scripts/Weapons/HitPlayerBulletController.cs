@@ -53,6 +53,10 @@ public class HitPlayerBulletController : MonoBehaviour
     [Tooltip("Which layers this bullet is allowed to damage. Assigned by AIWeaponController.")]
     public LayerMask allowedLayers;
 
+    [Header("Layer Filtering")]
+    [Tooltip("Which layers this bullet is allowed to damage. Assigned by AIWeaponController.")]
+    private string stringToHitWith = "PlayerShip";
+
     // Internal
     private float lifeTimer;
     private Transform target;
@@ -135,7 +139,7 @@ public class HitPlayerBulletController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // If the other object's layer isn't "Player", ignore
-        if (other.gameObject.layer != LayerMask.NameToLayer("Player"))
+        if (other.gameObject.layer != LayerMask.NameToLayer(stringToHitWith))
             return;
 
         // Ok, it's an enemy. Proceed with damage logic

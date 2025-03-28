@@ -193,6 +193,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planetLandingUI: {fileID: 856938053095591608}
   planetSceneName: Planet_A
+  layerTriggerString: PlayerShip
 --- !u!1 &3104159598341502198
 GameObject:
   m_ObjectHideFlags: 0

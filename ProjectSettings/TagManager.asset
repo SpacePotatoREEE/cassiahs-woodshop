@@ -12,10 +12,10 @@ TagManager:
   - Water
   - UI
   - EnemySpaceShip
-  - Player
+  - PlayerShip
   - BulletFromPlayer
   - BulletFromEnemy
-  - 
+  - PlayerHuman
   - 
   - 
   - 

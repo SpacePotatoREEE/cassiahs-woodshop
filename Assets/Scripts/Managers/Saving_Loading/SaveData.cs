@@ -3,15 +3,17 @@ using System;
 [Serializable]
 public class SaveData
 {
-    // Player position
+    // Position
     public float playerPosX;
     public float playerPosY;
     public float playerPosZ;
 
-    // Player stats
+    // Health / level
     public float playerHealth;
-    public int playerLevel; // If you’re not using level yet, that’s fine.
+    public int   playerLevel;
 
-    // Current scene name
+    // NEW ► currency
+    public int   credits;          // starts at 0
+
     public string currentStarSystem;
 }

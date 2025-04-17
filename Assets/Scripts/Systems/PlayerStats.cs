@@ -1,108 +1,111 @@
 using UnityEngine;
 using System.Collections;
-using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerStats : MonoBehaviour
 {
-    [Header("Player Health Settings")]
+    /* ─────────────────────────  CONFIG  ───────────────────────── */
+    [Header("Player Health")]
     public float maxHealth = 100f;
     public float currentHealth;
 
     [Header("Disable Threshold")]
-    [Tooltip("If health < disableShipAtPercent * maxHealth, we consider this ship 'disabled'.")]
     [Range(0f, 1f)]
+    [Tooltip("If currentHealth / maxHealth drops below this, the ship is 'disabled'.")]
     public float disableShipAtPercent = 0.3f;
 
-    [Header("Disable Behavior")]
-    [Tooltip("If true, we disable the movement script when disabled.")]
+    [Header("Disable Behaviour")]
     public bool disableMovement = true;
-
-    [Tooltip("If true, we disable the weapon script when disabled.")]
-    public bool disableWeapon = true;
-
-    [Tooltip("Slowdown duration after entering disabled.")]
+    public bool disableWeapon   = true;
     public float slowDownDuration = 2f;
 
     [Header("References")]
-    [Tooltip("Optional movement script (e.g., ShipDriftController) to disable.")]
+    [Tooltip("Optional movement script (e.g., ShipDriftController).")]
     public MonoBehaviour movementScript;
-
-    [Tooltip("Optional weapon script (e.g., PlayerWeaponController) to disable.")]
+    [Tooltip("Optional weapon script.")]
     public MonoBehaviour weaponScript;
-
-    // Internal state
-    private bool isDisabled = false;
-    private bool isDestroyed = false;
-
-    private Rigidbody rb;
-    
+    [Tooltip("Optional UI health bar.")]
     public PlayerHealthBar playerHealthBar;
 
+    /* ──────────────────────  INTERNAL STATE  ───────────────────── */
+    private bool isDisabled  = false;
+    private bool isDestroyed = false;
+    private Rigidbody rb;
+
+    /* ─────────────────────────  UNITY  ─────────────────────────── */
     private void Awake()
     {
         currentHealth = maxHealth;
-        playerHealthBar.SetMaxHealth(maxHealth);
         rb = GetComponent<Rigidbody>();
 
-        // Make this player persist across scene loads
+        // Init health bar
+        if (playerHealthBar != null)
+        {
+            playerHealthBar.SetMaxHealth(maxHealth);
+            playerHealthBar.SetHealth(currentHealth);
+        }
+
+        // Persist across scenes
         DontDestroyOnLoad(gameObject);
     }
 
-    public void TakeDamage(float dmg)
-    {
-        if (isDestroyed) return; // Already destroyed
+    /* ────────────────────────  PUBLIC API  ─────────────────────── */
 
-        currentHealth -= dmg;
-        Debug.Log($"Player took {dmg} damage. Current health: {currentHealth} / {maxHealth}");
-        playerHealthBar.SetHealth(currentHealth);
-        if (currentHealth <= 0f)
+    public void TakeDamage(float damage)
+    {
+        if (isDestroyed) return;
+
+        currentHealth = Mathf.Max(currentHealth - damage, 0f);
+        Debug.Log($"[PlayerStats] Took {damage} dmg → {currentHealth}/{maxHealth}");
+        SyncHealthBar();
+
+        if (currentHealth == 0f)
         {
-            currentHealth = 0f;
             Die();
             return;
         }
 
-        float hpPercent = currentHealth / maxHealth;
-        // If not yet disabled, but HP < threshold => disable
-        if (!isDisabled && hpPercent < disableShipAtPercent)
-        {
+        if (!isDisabled && currentHealth / maxHealth < disableShipAtPercent)
             EnterDisabledState();
-        }
     }
-    
-    // Example: a method to heal
+
     public void Heal(float amount)
     {
-        currentHealth += amount;
-        if (currentHealth > maxHealth) currentHealth = maxHealth;
-        Debug.Log($"Player healed {amount}. Current health: {currentHealth} / {maxHealth}");
+        if (isDestroyed) return;
+
+        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        Debug.Log($"[PlayerStats] Healed {amount} → {currentHealth}/{maxHealth}");
+        SyncHealthBar();
+
+        // Optionally exit disabled state here if you want
     }
+
+    /// <summary>Synchronise UI with the currentHealth value.</summary>
+    public void SyncHealthBar()
+    {
+        if (playerHealthBar != null)
+            playerHealthBar.SetHealth(currentHealth);
+    }
+
+    public bool IsDisabledOrDestroyed() => isDisabled || isDestroyed;
+
+    /* ──────────────────────  INTERNAL LOGIC  ───────────────────── */
 
     private void Die()
     {
-        Debug.Log("[PlayerSpaceShipStats] Player died!");
+        Debug.Log("[PlayerStats] Player died");
         isDestroyed = true;
-        // Destroys the persistent player
         Destroy(gameObject);
     }
 
     private void EnterDisabledState()
     {
         isDisabled = true;
-        Debug.Log("[PlayerSpaceShipStats] Player is now disabled!");
+        Debug.Log("[PlayerStats] Ship disabled");
 
-        // 1) Stop movement & weapon scripts
-        if (disableMovement && movementScript != null)
-        {
-            movementScript.enabled = false;  // This prevents any further movement
-        }
-        if (disableWeapon && weaponScript != null)
-        {
-            weaponScript.enabled = false;    // This prevents firing
-        }
+        if (disableMovement && movementScript != null) movementScript.enabled = false;
+        if (disableWeapon   && weaponScript   != null) weaponScript.enabled   = false;
 
-        // 2) Optionally do a slowdown if we're in motion
         StartCoroutine(SlowDownRoutine());
     }
 
@@ -114,17 +117,11 @@ public class PlayerStats : MonoBehaviour
         while (timer < slowDownDuration)
         {
             timer += Time.deltaTime;
-            float t = Mathf.Clamp01(timer / slowDownDuration);
+            float t = timer / slowDownDuration;
             if (rb) rb.linearVelocity = Vector3.Lerp(startVel, Vector3.zero, t);
             yield return null;
         }
 
         if (rb) rb.linearVelocity = Vector3.zero;
-        // At this point, the player is fully immobile and cannot shoot or move.
-    }
-
-    public bool IsDisabledOrDestroyed()
-    {
-        return isDisabled || isDestroyed;
     }
 }

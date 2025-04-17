@@ -16,7 +16,7 @@ TagManager:
   - BulletFromPlayer
   - BulletFromEnemy
   - PlayerHuman
-  - 
+  - EnemyBoardingTrigger
   - 
   - 
   - 

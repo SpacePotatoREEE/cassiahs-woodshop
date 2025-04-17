@@ -28,12 +28,21 @@ public class EnemySpaceShip : MonoBehaviour
 
     [Header("References")]
     public Rigidbody rb;
+    
+    [Header("Loot: Credits")]
+    [Tooltip("Random credits dropped when this ship is disabled.")]
+    [SerializeField] private int minCredits = 50;
+    [SerializeField] private int maxCredits = 300;
+
+    public int Credits { get; private set; }  // public read‑only
 
     private void Awake()
     {
         currentHealth = maxHealth;
         if (rb == null) 
-            rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
+        
+        Credits = Random.Range(minCredits, maxCredits + 1);
 
         // Initially hide indicators
         if (targetingIndicator != null)   targetingIndicator.SetActive(false);
@@ -102,6 +111,14 @@ public class EnemySpaceShip : MonoBehaviour
                 ai.EnterDisabledState();
             }
         }
+    }
+    
+    /// <summary>Called by BoardingPanel to transfer all credits to the player.</summary>
+    public int LootCredits()
+    {
+        int amt = Credits;
+        Credits = 0;
+        return amt;
     }
 
     private void Die()

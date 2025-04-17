@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   npcShipPrefab: {fileID: 1667069528744625763, guid: 24f2ecf246d57c94d999d64df07c262d, type: 3}
-  planetTransform: {fileID: 5443109905057787818}
+  planetTransform: {fileID: 5238610435128329471}
   minShipsPerSpawn: 1
   maxShipsPerSpawn: 3
   minSpawnInterval: 2
@@ -221,7 +221,7 @@ Transform:
   m_GameObject: {fileID: 3104159598341502198}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.72, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -306,7 +306,7 @@ Transform:
   m_GameObject: {fileID: 4252497398058967199}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.69, z: 0}
   m_LocalScale: {x: 0.35787135, y: 0.35787135, z: 0.35787135}
   m_ConstrainProportionsScale: 0
   m_Children: []

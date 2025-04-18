@@ -46,6 +46,9 @@ public class NPCShipAI : MonoBehaviour
     [Tooltip("How strongly we accelerate toward/away from the player.")]
     public float attackThrustFactor = 1.0f;
 
+    /// <summary>True while this AI is in its 'Attack' primary state.</summary>
+    public bool IsInAttackMode => primaryState == PrimaryState.Attack;
+    
     [Header("Debug Settings")]
     public bool showDebug = true;
     public float debugRadius = 1f;

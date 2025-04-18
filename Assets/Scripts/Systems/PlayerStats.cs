@@ -48,6 +48,18 @@ public class PlayerStats : MonoBehaviour
         // Persist across scenes
         DontDestroyOnLoad(gameObject);
     }
+    
+    private void Start()
+    {
+        if (playerHealthBar == null)
+            playerHealthBar = FindObjectOfType<PlayerHealthBar>(true);  // include inactive HUD
+
+        if (playerHealthBar != null)
+        {
+            playerHealthBar.SetMaxHealth(maxHealth);   // ← sets slider.maxValue = 400
+            playerHealthBar.SetHealth(currentHealth);  // ← shows full bar
+        }
+    }
 
     /* ────────────────────────  PUBLIC API  ─────────────────────── */
 

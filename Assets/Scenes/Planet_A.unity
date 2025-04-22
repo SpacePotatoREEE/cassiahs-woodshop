@@ -6588,6 +6588,9 @@ MonoBehaviour:
   - weapon: {fileID: 11400000, guid: a98d767dcc491634fab8f917eb547192, type: 2}
     buyPrice: 200
     quantity: 4
+  - weapon: {fileID: 11400000, guid: e86be912cbded4848aa31e332e0bef6d, type: 2}
+    buyPrice: 600
+    quantity: 2
   shopPanel: {fileID: 92738049}
   shopButton: {fileID: 1570611752}
 --- !u!1 &1217735616

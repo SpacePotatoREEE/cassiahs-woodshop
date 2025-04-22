@@ -6584,7 +6584,7 @@ MonoBehaviour:
   stock:
   - weapon: {fileID: 11400000, guid: 2038604a765698841ac2bb9e5b569647, type: 2}
     buyPrice: 200
-    quantity: 5
+    quantity: 2
   - weapon: {fileID: 11400000, guid: a98d767dcc491634fab8f917eb547192, type: 2}
     buyPrice: 200
     quantity: 4

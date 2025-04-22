@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class ShopPanelUI : MonoBehaviour
 {
@@ -110,6 +111,7 @@ public class ShopPanelUI : MonoBehaviour
         shop.OnBought(selectedEntry);
         RefreshRow(selectedEntry);
         ShowDescription(selectedEntry);          // keep panel on same item
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     private void SellSelected()
@@ -121,6 +123,7 @@ public class ShopPanelUI : MonoBehaviour
         shop.OnSold(selectedEntry);
         RefreshRow(selectedEntry);
         ShowDescription(selectedEntry);
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     /* ---------- UI helpers ---------- */

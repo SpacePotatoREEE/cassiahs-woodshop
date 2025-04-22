@@ -5,90 +5,159 @@ using TMPro;
 
 public class ShopPanelUI : MonoBehaviour
 {
-    [Header("UI References")]
+    [Header("UI Refs")]
     public Transform     itemListParent;
     public ShopItemUI    itemButtonPrefab;
     public Image         bigImage;
     public TextMeshProUGUI descText;
     public Button        buyButton;
+    public Button        sellButton;            // ensure this exists
     public Button        doneButton;
 
-    private WeaponDefinition selectedWeapon;
-    private int selectedPrice;
-    private PlayerLoadout loadout;
+    private PlanetShop           shop;
+    private PlayerLoadout        loadout;
+    private PlanetShop.StockEntry selectedEntry;
     
-    // highlight‑selection support  (NEW)
+    // remember which row is currently highlighted
     private ShopItemUI lastSelected;
+    public bool IsSelected(PlanetShop.StockEntry e) => selectedEntry == e;
 
+    private readonly Dictionary<PlanetShop.StockEntry,ShopItemUI> buttonMap = new();
+
+    /* ---------- lifecycle ---------- */
     private void Awake()
     {
-        buyButton.onClick.AddListener(BuySelected);
+        buyButton .onClick.AddListener(BuySelected);
+        sellButton.onClick.AddListener(SellSelected);
         doneButton.onClick.AddListener(() => gameObject.SetActive(false));
-        gameObject.SetActive(false);   // start hidden
+        gameObject.SetActive(false);
     }
 
-    public void Populate(PlayerLoadout pLoadout, List<(WeaponDefinition,int)> stock)
+    public void Open(PlanetShop host, PlayerLoadout pl)
     {
-        loadout = pLoadout;
+        shop    = host;
+        loadout = pl;
 
+        BuildList();
+        ClearSelection();
+
+        loadout.OnLoadoutChanged += RefreshAllRows;    // keep “You” counts live
+    }
+    private void OnDisable()
+    {
+        if (loadout) loadout.OnLoadoutChanged -= RefreshAllRows;
+    }
+
+    /* ---------- build & refresh ---------- */
+    private void BuildList()
+    {
         foreach (Transform c in itemListParent) Destroy(c.gameObject);
-        foreach (var (w,cost) in stock)
-            Instantiate(itemButtonPrefab, itemListParent).Init(w, cost, this);
+        buttonMap.Clear();
 
-        ClearDescription();
-        selectedWeapon = null;
+        foreach (var entry in shop.stock)
+        {
+            var ui = Instantiate(itemButtonPrefab, itemListParent);
+            ui.Init(entry, this);
+            ui.SetSelected(false);
+            buttonMap.Add(entry, ui);
+        }
+    }
+    private void RefreshAllRows()
+    {
+        foreach (var kv in buttonMap) kv.Value.Refresh();
+        UpdateButtonStates();
     }
 
-    /* ---------- called from ShopItemUI ---------- */
-    public void ShowDescription(WeaponDefinition w, int cost)
+    private void RefreshRow(PlanetShop.StockEntry e)
     {
-        var stats = w.GetBulletStats();
-
-        bigImage.sprite = w.thumbnail;
-        descText.text =
-$@"{w.weaponName}
-
-Damage  : {stats?.damage}
-Speed   : {stats?.speed}
-Lifetime: {stats?.lifetime}
-Homing  : {stats?.isHoming}
-
-Price   : ₡ {cost:n0}";
+        if (buttonMap.TryGetValue(e, out var ui)) ui.Refresh();
+        UpdateButtonStates();
     }
-    public void ClearDescription()
+
+    /* ---------- selection ---------- */
+    public void OnItemClicked(PlanetShop.StockEntry entry, ShopItemUI ui)
     {
+        // turn off previous highlight
+        if (lastSelected && lastSelected != ui)
+            lastSelected.SetSelected(false);
+
+        selectedEntry = entry;
+        ui.SetSelected(true);          // turn on new highlight
+        lastSelected = ui;
+
+        ShowDescription(entry);
+        UpdateButtonStates();
+    }
+
+    private void ClearSelection()
+    {
+        selectedEntry = null;
         bigImage.sprite = null;
-        descText.text = "";
+        descText.text   = "Select an item…";
+        UpdateButtonStates();
+        if (lastSelected) lastSelected.SetSelected(false);
+        lastSelected = null;
     }
-    public void SelectItem(WeaponDefinition w,int cost)
-    {
-        selectedWeapon = w;
-        selectedPrice  = cost;
-        ShowDescription(w,cost);
-    }
-    
-    public void NotifyItemClicked(ShopItemUI clicked)
-    {
-        if (lastSelected) lastSelected.SetSelected(false);  // turn off previous frame
-        clicked.SetSelected(true);                          // highlight current
-        lastSelected = clicked;
-    }
-    // ─────────────────────────────────────────────
-    /* -------------------------------------------- */
 
+    /* ---------- buy / sell ---------- */
     private void BuySelected()
     {
-        if (!selectedWeapon) return;
+        if (selectedEntry == null) return;
+        if (selectedEntry.quantity <= 0) return;
+        if (!GameManager.Instance.SpendCredits(selectedEntry.buyPrice)) return;
 
-        if (GameManager.Instance.SpendCredits(selectedPrice))
+        loadout.AddWeapon(selectedEntry.weapon, 1);
+        shop.OnBought(selectedEntry);
+        RefreshRow(selectedEntry);
+        ShowDescription(selectedEntry);          // keep panel on same item
+    }
+
+    private void SellSelected()
+    {
+        if (selectedEntry == null) return;
+        if (!loadout.RemoveWeapon(selectedEntry.weapon, 1)) return;
+
+        GameManager.Instance.AddCredits(selectedEntry.buyPrice);
+        shop.OnSold(selectedEntry);
+        RefreshRow(selectedEntry);
+        ShowDescription(selectedEntry);
+    }
+
+    /* ---------- UI helpers ---------- */
+    private void UpdateButtonStates()
+    {
+        if (selectedEntry == null)
         {
-            loadout.AddWeapon(selectedWeapon);
-            ClearDescription();
-            selectedWeapon = null;
+            buyButton.interactable = sellButton.interactable = false;
+            return;
         }
-        else
-        {
-            // TODO show "not enough credits" pop‑up
-        }
+        int youOwn = loadout.GetQuantity(selectedEntry.weapon);
+        buyButton .interactable = selectedEntry.quantity > 0;
+        sellButton.interactable = youOwn               > 0;
+    }
+
+    private void ShowDescription(PlanetShop.StockEntry e)
+    {
+        var stats = e.weapon.GetBulletStats();
+        bigImage.sprite = e.weapon.thumbnail;
+
+        descText.text =
+$@"{e.weapon.weaponName}
+
+{(string.IsNullOrWhiteSpace(e.weapon.description) ? "" : e.weapon.description + "\n\n")}
+Damage   : {stats?.damage}
+Speed    : {stats?.speed}
+Lifetime : {stats?.lifetime}
+Fire rate: {stats?.fireRate}
+
+Shop stock : {e.quantity}
+You own    : {loadout.GetQuantity(e.weapon)}
+
+Price: ₡ {e.buyPrice:n0}";
+    }
+    
+    public int GetPlayerOwns(WeaponDefinition w)
+    {
+        return loadout ? loadout.GetQuantity(w) : 0;
     }
 }

@@ -3,44 +3,64 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 
-/// One button in the shop’s scroll list.
 public class ShopItemUI : MonoBehaviour, IPointerClickHandler
 {
     [Header("UI")]
-    public Image            thumb;
-    public TextMeshProUGUI  nameText;
-    public TextMeshProUGUI  priceText;
-    public Image            highlightFrame;        // optional – outline for “selected”
+    public Image           thumb;
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI stockText;
+    public TextMeshProUGUI ownText;
+    public Image           background;          // drag the root Image here
+    public Image highlightFrame;    // drag the overlay frame here
 
-    private WeaponDefinition weapon;
-    private int              price;
-    private ShopPanelUI      panel;
+    private PlanetShop.StockEntry entry;
+    private ShopPanelUI           panel;
 
-    /* ─────────────  public API  ───────────── */
-    public void Init(WeaponDefinition w, int cost, ShopPanelUI owner)
+    public void Init(PlanetShop.StockEntry e, ShopPanelUI p)
     {
-        weapon = w;
-        price  = cost;
-        panel  = owner;
-
-        if (thumb)     thumb.sprite  = w.thumbnail;
-        if (nameText)  nameText.text = w.weaponName;
-        if (priceText) priceText.text = $"₡ {cost:n0}";
-
-        SetSelected(false);                // reset visual state
+        entry = e;
+        panel = p;
+        Refresh();
+        SetSelected(false);
     }
 
-    public void SetSelected(bool value)
+    public void Refresh()
     {
-        if (highlightFrame)
-            highlightFrame.enabled = value;
+        if (entry == null) return;
+
+        thumb.sprite  = entry.weapon.thumbnail;
+        nameText.text = entry.weapon.weaponName;
+        stockText.text = $"Stock: {entry.quantity}";
+        ownText.text   = $"You: {panel.GetPlayerOwns(entry.weapon)}";
+
+        // grey‑out if out of stock
+        bool outOfStock = entry.quantity == 0;
+        background.color = outOfStock ? new Color(0.6f,0.6f,0.6f,1f) : Color.white;
+        GetComponent<Button>().interactable = !outOfStock;
+        
+        // keep current selection tint
+        var btn = GetComponent<Button>();
+        if (btn && btn.targetGraphic)
+            btn.targetGraphic.color = (panel.IsSelected(entry))
+                ? new Color(0.8f,0.9f,1f,1f)          // selected tint
+                : Color.white;                        // normal
     }
 
-    /* ─────────────  events  ───────────── */
+    /* ---------- selection visuals ---------- */
+    public void SetSelected(bool on)
+    {
+        // Button tint
+        var btn = GetComponent<Button>();
+        if (btn && btn.targetGraphic)
+            btn.targetGraphic.color = on ? new Color(0.8f,0.9f,1f,1f)
+                : Color.white;
+
+        // Custom frame
+        if (highlightFrame) highlightFrame.enabled = on;
+    }
+
     public void OnPointerClick(PointerEventData _)
     {
-        panel.SelectItem(weapon, price);   // panel also calls ShowDescription
-        panel.NotifyItemClicked(this);     // so panel can toggle highlight frames
+        panel.OnItemClicked(entry, this);
     }
-    
 }

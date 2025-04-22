@@ -16,3 +16,4 @@ MonoBehaviour:
   thumbnail: {fileID: 21300000, guid: f999dfb6b02e4ce4a93aa5500af325db, type: 3}
   bulletPrefab: {fileID: 8558436746612208066, guid: d259c6257e2c24a43b86758d5d17d3a4, type: 3}
   basePrice: 100
+  description: A basic blaster!

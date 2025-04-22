@@ -9,6 +9,10 @@ public class HitPlayerBulletController : MonoBehaviour
         PlusY,  // Local +Y is bullet's forward
         MinusY  // Local -Y is bullet's forward
     }
+    
+    [Header("Bullet Stats")]
+    [Tooltip("How many shots per second this weapon can fire.")]
+    public float fireRate = 2f;                 //  ← add this line
 
     [Header("Bullet Settings")]
     [Tooltip("How fast the bullet travels along its forward axis each frame (units/sec).")]
@@ -48,155 +52,77 @@ public class HitPlayerBulletController : MonoBehaviour
     [Header("Effects")]
     [Tooltip("Optional hit effect spawned on impact (particle, explosion, etc.).")]
     public GameObject hitEffectPrefab;
-    
-    [Header("Layer Filtering")]
-    [Tooltip("Which layers this bullet is allowed to damage. Assigned by AIWeaponController.")]
-    public LayerMask allowedLayers;
 
-    [Header("Layer Filtering")]
-    [Tooltip("Which layers this bullet is allowed to damage. Assigned by AIWeaponController.")]
-    private string stringToHitWith = "PlayerShip";
-
-    // Internal
+    // internal
     private float lifeTimer;
     private Transform target;
 
     private void OnEnable()
     {
         lifeTimer = lifetime;
-
-        // If we want to face the enemy at spawn
-        if (isHoming && target != null)
-        {
-            Vector3 dir = target.position - transform.position;
-            if (flattenYPosition)
-                dir.y = 0f;
-
-            if (dir.sqrMagnitude > 0.001f)
-            {
-                Quaternion initialRot = ComputeDesiredRotation(dir.normalized);
-                transform.rotation = initialRot;
-            }
-        }
-
-        // Now lock the X axis so it doesn’t pitch
-        if (lockXRotation)
-        {
-            Vector3 eul = transform.localEulerAngles;
-            eul.x = 0f;
-            transform.localEulerAngles = eul;
-        }
     }
 
     private void Update()
     {
-        // 1) HOMING ROTATION (continuous)
-        if (isHoming && target != null)
-        {
-            Vector3 dirToTarget = target.position - transform.position;
+        // homing rotate
+        if (isHoming && target)
+            RotateTowardsTarget();
 
-            if (flattenYPosition)
-                dirToTarget.y = 0f;
+        // move
+        Vector3 localDir = AxisVector(forwardAxis);
+        transform.Translate(localDir * speed * Time.deltaTime, Space.Self);
 
-            if (dirToTarget.sqrMagnitude > 0.001f)
-            {
-                dirToTarget.Normalize();
-                Quaternion desiredRot = ComputeDesiredRotation(dirToTarget);
-                transform.rotation = Quaternion.RotateTowards(
-                    transform.rotation,
-                    desiredRot,
-                    rotateSpeed * Time.deltaTime
-                );
-            }
-
-            // Lock axes if needed
-            if (lockXRotation || lockYRotation || lockZRotation)
-            {
-                LockRotationAxes();
-            }
-        }
-
-        // 2) MOVE FORWARD
-        MoveForward();
-
-        // 3) LIFETIME CHECK
+        // lifetime
         lifeTimer -= Time.deltaTime;
-        if (lifeTimer <= 0f)
-        {
-            Destroy(gameObject);
-        }
+        if (lifeTimer <= 0f) Destroy(gameObject);
     }
 
-    /// <summary>
-    /// Called by the weapon script to set (or clear) a target transform.
-    /// If isHoming = true, the bullet will steer toward that target each frame.
-    /// </summary>
-    public void SetTarget(Transform newTarget)
-    {
-        target = newTarget;
-    }
+    public void SetTarget(Transform t) => target = t;
 
     private void OnTriggerEnter(Collider other)
     {
-        // If the other object's layer isn't "Player", ignore
-        if (other.gameObject.layer != LayerMask.NameToLayer(stringToHitWith))
-            return;
-
-        // Ok, it's an enemy. Proceed with damage logic
-        PlayerStats player = other.GetComponent<PlayerStats>();
-        if (player != null)
+        if (other.CompareTag("Player"))
         {
-            player.TakeDamage(damage);
+            var stats = other.GetComponent<PlayerStats>();
+            if (stats) stats.TakeDamage(damage);
 
-            if (hitEffectPrefab != null)
+            if (hitEffectPrefab)
                 Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
 
             Destroy(gameObject);
         }
     }
-    
-    private void CallAttackStateIfNeeded(EnemySpaceShip enemy)
+
+    /* ───────── helpers ───────── */
+    private void RotateTowardsTarget()
     {
-        NPCShipAI npcAI = enemy.GetComponent<NPCShipAI>();
-        if (npcAI != null)
+        Vector3 dir = target.position - transform.position;
+        if (flattenYPosition) dir.y = 0f;
+        if (dir.sqrMagnitude < 0.01f) return;
+
+        dir.Normalize();
+        Quaternion desired = Quaternion.FromToRotation(AxisVector(forwardAxis), dir);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation,
+                                                      desired,
+                                                      rotateSpeed * Time.deltaTime);
+
+        if (lockXRotation || lockYRotation || lockZRotation)
         {
-            npcAI.EnterAttackState();
+            Vector3 e = transform.localEulerAngles;
+            if (lockXRotation) e.x = 0f;
+            if (lockYRotation) e.y = 0f;
+            if (lockZRotation) e.z = 0f;
+            transform.localEulerAngles = e;
         }
     }
 
-    // ---------------------------------------------------------------
-    // HELPER: Compute rotation so bullet's forward axis aims at dirToTarget
-    // ---------------------------------------------------------------
-    private Quaternion ComputeDesiredRotation(Vector3 dirToTarget)
-    {
-        Vector3 bulletForwardVector = AxisVector(forwardAxis);
-        return Quaternion.FromToRotation(bulletForwardVector, dirToTarget);
-    }
-
-    private Vector3 AxisVector(ForwardAxis axis)
-    {
-        switch (axis)
+    private Vector3 AxisVector(ForwardAxis axis) =>
+        axis switch
         {
-            case ForwardAxis.PlusZ:  return Vector3.forward;
-            case ForwardAxis.MinusZ: return Vector3.back;
-            case ForwardAxis.PlusY:  return Vector3.up;
-            case ForwardAxis.MinusY: return Vector3.down;
-            default:                 return Vector3.forward;
-        }
-    }
-
-    private void MoveForward()
-    {
-        Vector3 localDir = AxisVector(forwardAxis);
-        transform.Translate(localDir * speed * Time.deltaTime, Space.Self);
-    }
-
-    private void LockRotationAxes()
-    {
-        Vector3 eul = transform.localEulerAngles;
-        if (lockXRotation) eul.x = 0f;
-        if (lockYRotation) eul.y = 0f;
-        if (lockZRotation) eul.z = 0f;
-        transform.localEulerAngles = eul;
-    }
+            ForwardAxis.PlusZ  => Vector3.forward,
+            ForwardAxis.MinusZ => Vector3.back,
+            ForwardAxis.PlusY  => Vector3.up,
+            ForwardAxis.MinusY => Vector3.down,
+            _                  => Vector3.forward
+        };
 }

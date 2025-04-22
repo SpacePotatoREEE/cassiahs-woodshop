@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// One entry sold in shops and equipped by the player.
 [CreateAssetMenu(fileName = "Weapon_", menuName = "Shop/Weapon Definition")]
 public class WeaponDefinition : ScriptableObject
 {
@@ -9,9 +8,9 @@ public class WeaponDefinition : ScriptableObject
     public GameObject  bulletPrefab;
     public int         basePrice = 100;
 
-    // Helper — pulls stats off the bullet prefab for UI.
+    [TextArea]                                           // NEW
+    public string      description;                      // NEW  ←────────────
+
     public HitEnemyBulletController GetBulletStats()
-    {
-        return bulletPrefab ? bulletPrefab.GetComponent<HitEnemyBulletController>() : null;
-    }
+        => bulletPrefab ? bulletPrefab.GetComponent<HitEnemyBulletController>() : null;
 }

@@ -136,4 +136,12 @@ public class PlayerStats : MonoBehaviour
 
         if (rb) rb.linearVelocity = Vector3.zero;
     }
+    
+    /// <summary>Instantly restore to maximum health.</summary>
+    public void FullHeal()
+    {
+        currentHealth = maxHealth;   // assumes these fields already exist
+        // If you broadcast health changes to the HUD, invoke that event here:
+        // OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
 }

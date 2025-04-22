@@ -159,6 +159,7 @@ MonoBehaviour:
   minSpawnInterval: 2
   maxSpawnInterval: 8
   spawnDistanceFromPlanet: 2
+  initialSpawnDelay: 0
 --- !u!135 &4468281819620745583
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -195,6 +196,7 @@ MonoBehaviour:
   planetLandingUI: {fileID: 856938053095591608}
   planetSceneName: Planet_A
   layerTriggerString: PlayerShip
+  fullHealOnLanding: 1
 --- !u!1 &3104159598341502198
 GameObject:
   m_ObjectHideFlags: 0

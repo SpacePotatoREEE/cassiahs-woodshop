@@ -11,55 +11,79 @@ public class BoardingPanelUI : MonoBehaviour
     [SerializeField] private Button takeAmmoButton;
     [SerializeField] private Button captureShipButton;
 
-    [Header("NEW Leave Button")]
+    [Header("Leave Button")]
     [SerializeField] private Button leaveButton;
 
     [Header("Credits Display")]
     [SerializeField] private TextMeshProUGUI creditsLabel;
 
     private EnemySpaceShip targetShip;
-    private System.Action onClose;   // callback supplied by BoardingTrigger
+    private System.Action  onClose;
 
-    /* -------- initialisation, called once from BoardingTrigger -------- */
+    /* ---------- Init (called from BoardingTrigger) ---------- */
     public void Init(EnemySpaceShip ship, System.Action closeCallback)
     {
         targetShip = ship;
         onClose    = closeCallback;
+
+        // ----- take‑credits button -----
+        if (takeCreditsButton != null)
+        {
+            takeCreditsButton.onClick.RemoveAllListeners();
+            takeCreditsButton.onClick.AddListener(OnTakeCredits);
+            takeCreditsButton.interactable = (targetShip && targetShip.Credits > 0);
+        }
+        else
+            Debug.LogWarning("[BoardingPanel] takeCreditsButton is not assigned", this);
+
+        // ----- leave button -----
+        if (leaveButton != null)
+        {
+            leaveButton.onClick.RemoveAllListeners();
+            leaveButton.onClick.AddListener(ClosePanel);
+        }
+        else
+            Debug.LogWarning("[BoardingPanel] leaveButton is not assigned", this);
+
+        // ----- placeholder buttons (safe‑check) -----
+        SafeAddClick(takeEnergyButton , () => Debug.Log("Energy not implemented"));
+        SafeAddClick(takeCargoButton  , () => Debug.Log("Cargo  not implemented"));
+        SafeAddClick(takeAmmoButton   , () => Debug.Log("Ammo   not implemented"));
+        SafeAddClick(captureShipButton, () => Debug.Log("Capture not implemented"));
+
         UpdateCreditsLabel();
-
-        takeCreditsButton.onClick.AddListener(OnTakeCredits);
-
-        // placeholders
-        takeEnergyButton .onClick.AddListener(() => Debug.Log("Energy not implemented"));
-        takeCargoButton  .onClick.AddListener(() => Debug.Log("Cargo  not implemented"));
-        takeAmmoButton   .onClick.AddListener(() => Debug.Log("Ammo   not implemented"));
-        captureShipButton.onClick.AddListener(() => Debug.Log("Capture not implemented"));
-
-        /* new leave button */
-        leaveButton.onClick.AddListener(ClosePanel);
     }
 
+    /* ---------- Take Credits ---------- */
     private void OnTakeCredits()
     {
-        if (targetShip == null) return;
+        if (targetShip == null) { Debug.LogWarning("No target ship"); return; }
+        if (takeCreditsButton == null) return;
 
         int amount = targetShip.LootCredits();
-        if (amount > 0)
-        {
+        if (amount > 0 && GameManager.Instance != null)
             GameManager.Instance.AddCredits(amount);
-            UpdateCreditsLabel();
-            takeCreditsButton.interactable = false;
-        }
+
+        UpdateCreditsLabel();
     }
 
+    /* ---------- Helpers ---------- */
     private void UpdateCreditsLabel()
     {
-        if (creditsLabel && targetShip != null)
-            creditsLabel.text = $"Credits Onboard: {targetShip.Credits:n0}";
+        if (creditsLabel)
+            creditsLabel.text = targetShip
+                ? $"₡ {targetShip.Credits:n0}"
+                : "₡ 0";
+
+        if (takeCreditsButton)
+            takeCreditsButton.interactable =
+                (targetShip && targetShip.Credits > 0);
     }
 
-    private void ClosePanel()
+    private void ClosePanel() => onClose?.Invoke();
+
+    private static void SafeAddClick(Button btn, System.Action cb)
     {
-        onClose?.Invoke();           // tell BoardingTrigger to hide & resume game
+        if (btn != null) { btn.onClick.RemoveAllListeners(); btn.onClick.AddListener(() => cb()); }
     }
 }

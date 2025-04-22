@@ -9,6 +9,10 @@ public class HitEnemyBulletController : MonoBehaviour
         PlusY,  // Local +Y is bullet's forward
         MinusY  // Local -Y is bullet's forward
     }
+    
+    [Header("Bullet Stats")]
+    [Tooltip("How many shots per second this weapon can fire.")]
+    public float fireRate = 2f;                 //  ← add this line
 
     [Header("Bullet Settings")]
     [Tooltip("How fast the bullet travels along its forward axis each frame (units/sec).")]

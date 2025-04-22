@@ -16,3 +16,5 @@ MonoBehaviour:
   thumbnail: {fileID: 21300000, guid: 0ffd7943f90b2a64d877218cb4fd489f, type: 3}
   bulletPrefab: {fileID: 8558436746612208066, guid: 4db5870b71737af4c9aa04eb451dcbac, type: 3}
   basePrice: 200
+  description: ' A plasma blaster! LOTS OF WORDS A plasma blaster! LOTS OF WORDS
+    A plasma blaster! '

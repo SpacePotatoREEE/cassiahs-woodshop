@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ccc84c14ecc7e49a945db62535199b, type: 3}
   m_Name: Weapon_Electric
   m_EditorClassIdentifier: 
-  weaponName: New Weapon
+  weaponName: Electric Blaster
   thumbnail: {fileID: 21300000, guid: fa9b94dd8b32d9243a437823184fb95e, type: 3}
   bulletPrefab: {fileID: 8558436746612208066, guid: edb2dc583af52cf4e88c939cb8512e45, type: 3}
   basePrice: 600

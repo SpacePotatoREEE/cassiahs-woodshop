@@ -30,8 +30,8 @@ public class ShopItemUI : MonoBehaviour, IPointerClickHandler
 
         thumb.sprite  = entry.weapon.thumbnail;
         nameText.text = entry.weapon.weaponName;
-        stockText.text = $"Stock: {entry.quantity}";
-        ownText.text   = $"You: {panel.GetPlayerOwns(entry.weapon)}";
+        stockText.text = $"{entry.quantity}";
+        ownText.text   = $"{panel.GetPlayerOwns(entry.weapon)}";
 
         // grey‑out if out of stock
         bool outOfStock = entry.quantity == 0;

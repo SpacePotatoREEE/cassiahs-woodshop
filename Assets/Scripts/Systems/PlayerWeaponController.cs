@@ -42,11 +42,21 @@ public class PlayerWeaponController : MonoBehaviour
     private void OnDestroy() => loadout.OnLoadoutChanged -= RebuildMounts;
 
     /* ---------------- update ---------------- */
+    private bool holdingFire = false;   // new
+
     private void Update()
     {
         UpdateClosestEnemyIndicator();
 
-        if (Input.GetKey(KeyCode.Space))
+        bool fireHeld = Input.GetKey(KeyCode.Space);
+
+        /* ---------- detect first press ---------- */
+        if (fireHeld && !holdingFire)               // just pressed this frame
+            SeedMountTimers(Time.time);
+
+        holdingFire = fireHeld;
+
+        if (fireHeld)
             TryFireMountedWeapons();
 
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -171,6 +181,23 @@ public class PlayerWeaponController : MonoBehaviour
             currentClosestShip?.SetPlayerClosest(false);
             newClosest?.SetPlayerClosest(true);
             currentClosestShip = newClosest;
+        }
+    }
+    
+    /// Give every mount a nextTime based on "now + its phase offset"
+    private void SeedMountTimers(float now)
+    {
+        // Calculates phase order 0,1,2,… for each weapon group
+        var perWeaponIndex = new Dictionary<WeaponDefinition,int>();
+
+        foreach (var m in mounts)
+        {
+            int  index = perWeaponIndex.TryGetValue(m.stack.weapon, out var v) ? v : 0;
+            perWeaponIndex[m.stack.weapon] = index + 1;
+
+            // offset inside this weapon group
+            float phaseStep = m.fireInterval / m.stack.qty;
+            m.nextTime = now + index * phaseStep;
         }
     }
 }

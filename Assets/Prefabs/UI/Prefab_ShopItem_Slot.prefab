@@ -545,8 +545,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   thumb: {fileID: 71009829165693208}
   nameText: {fileID: 538666041161550004}
-  stockText: {fileID: 7928878966724437990}
-  ownText: {fileID: 3012239109189421266}
+  stockText: {fileID: 8366183054422205318}
+  ownText: {fileID: 5071883451263342777}
   background: {fileID: 4285852252731064496}
   highlightFrame: {fileID: 8146054959230263091}
 --- !u!114 &5245035067764658531

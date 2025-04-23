@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6586023053415953059
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3005278338102919026, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_Name
+      value: Planet_Pirate_A
+      objectReference: {fileID: 0}
+    - target: {fileID: 5238610435128329471, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5238610435128329471, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5238610435128329471, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5238610435128329471, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5238610435128329471, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5238610435128329471, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5238610435128329471, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5238610435128329471, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5238610435128329471, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5238610435128329471, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443109905057787818, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.4788387
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443109905057787818, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.4788387
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443109905057787818, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.4788387
+      objectReference: {fileID: 0}
+    - target: {fileID: 5443109905057787818, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6245787654461873237, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: planetSceneName
+      value: Planet_B
+      objectReference: {fileID: 0}
+    - target: {fileID: 7926962766248055281, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.63307446
+      objectReference: {fileID: 0}
+    - target: {fileID: 7926962766248055281, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.63307446
+      objectReference: {fileID: 0}
+    - target: {fileID: 7926962766248055281, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.63307446
+      objectReference: {fileID: 0}
+    - target: {fileID: 8627229813041753836, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ceb7434c50a6828479c79c9ae52a6826, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d64ac0fcd4d2f61418f0f88e93229da9, type: 3}

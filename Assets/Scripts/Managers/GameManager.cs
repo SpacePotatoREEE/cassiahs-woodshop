@@ -1,32 +1,42 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
-using System.Collections;
 
 /// <summary>
 /// Global, persistent game controller.
-/// • Keeps current player (ship in space, human on planet) + health UI sync  
-/// • Owns “credits” currency (event‑driven so any scene HUD can display it)  
-/// • Handles save / load (position, health, credits)  
-/// • Pops up a “Save Successful” message  
-/// • Provides LoadPlanetScene so other scripts can switch scenes easily
+/// • Keeps current player (ship/human) + UI sync  
+/// • Owns currency and save / load  
+/// • Understands the galaxy map layer (StarSystemData)  
 /// </summary>
 public class GameManager : MonoBehaviour
 {
     /* ───────────────  SINGLETON  ─────────────── */
     public static GameManager Instance { get; private set; }
-    
-    private int pauseCounter = 0;          // allows nested pauses
+
+    /* ───────────────  GALAXY  ─────────────── */
+    [Header("Galaxy Database (drag asset here)")]
+    [SerializeField] private GalaxyDatabase galaxyDatabase;
+    public StarSystemData CurrentSystem => currentSystem;
+
+    private StarSystemData currentSystem;                       // set by StarSystemIdentifier
+    private readonly HashSet<StarSystemData> discoveredSystems = new();
+
+    public void RegisterCurrentSystem(StarSystemData sys)
+    {
+        currentSystem = sys;
+        if (sys != null) discoveredSystems.Add(sys);
+    }
 
     /* ───────────────  PLAYER  ──────────────── */
     [Header("Player Reference (auto‑filled)")]
-    [SerializeField] private GameObject player;      // ship or human, whichever is active
-    private PlayerStats playerStats;                 // cached component
+    [SerializeField] private GameObject player;
+    private PlayerStats playerStats;
 
     private const string LAYER_SHIP  = "PlayerShip";
     private const string LAYER_HUMAN = "PlayerHuman";
-    private int layerShip  = -1;
-    private int layerHuman = -1;
+    private int layerShip, layerHuman;
 
     /* ───────────────  CREDITS  ─────────────── */
     [Header("Credits Label (optional global)")]
@@ -53,13 +63,12 @@ public class GameManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        
-        // Make the notification UI survive all scenes (once is enough)
+
         if (saveNotificationPanel != null)
             DontDestroyOnLoad(saveNotificationPanel.transform.root.gameObject);
 
         SceneManager.sceneLoaded += OnSceneLoaded;
-        
+
         layerShip  = LayerMask.NameToLayer(LAYER_SHIP);
         layerHuman = LayerMask.NameToLayer(LAYER_HUMAN);
     }
@@ -67,7 +76,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         TryCachePlayer();
-        UpdateCreditsUI();              // show 0 on startup
+        UpdateCreditsUI();
         AutoLoadOnStartup();
     }
 
@@ -87,7 +96,7 @@ public class GameManager : MonoBehaviour
     {
         if (player != null) return;
 
-        foreach (var ps in FindObjectsOfType<PlayerStats>(true))   // include inactive just in case
+        foreach (var ps in FindObjectsOfType<PlayerStats>(true))
         {
             int l = ps.gameObject.layer;
             if (l == layerShip || l == layerHuman)
@@ -118,7 +127,6 @@ public class GameManager : MonoBehaviour
     {
         if (creditsText != null)
             creditsText.text = $"₡ {credits:n0}";
-
         OnCreditsChanged?.Invoke(credits);
     }
 
@@ -139,13 +147,26 @@ public class GameManager : MonoBehaviour
 
         SaveData data = new SaveData
         {
-            playerPosX        = player.transform.position.x,
-            playerPosY        = player.transform.position.y,
-            playerPosZ        = player.transform.position.z,
-            playerHealth      = playerStats.currentHealth,
-            playerLevel       = 1,
-            credits           = credits,
-            currentStarSystem = SceneManager.GetActiveScene().name
+            // transform
+            playerPosX = player.transform.position.x,
+            playerPosY = player.transform.position.y,
+            playerPosZ = player.transform.position.z,
+
+            // vitals
+            playerHealth = playerStats.currentHealth,
+            playerLevel  = 1,
+
+            // economy
+            credits = credits,
+
+            // galaxy
+            currentStarSystem = currentSystem != null
+                              ? currentSystem.displayName
+                              : SceneManager.GetActiveScene().name,
+
+            discoveredSystems = discoveredSystems
+                                .Select(s => s.displayName)
+                                .ToList()
         };
 
         SaveSystem.SaveGame(data);
@@ -159,13 +180,34 @@ public class GameManager : MonoBehaviour
         credits = data.credits;
         UpdateCreditsUI();
 
-        if (data.currentStarSystem == SceneManager.GetActiveScene().name)
+        // rebuild discovery set
+        discoveredSystems.Clear();
+        if (galaxyDatabase != null && data.discoveredSystems != null)
+        {
+            foreach (string name in data.discoveredSystems)
+            {
+                StarSystemData sys = galaxyDatabase.allSystems
+                                          .FirstOrDefault(s => s.displayName == name);
+                if (sys != null) discoveredSystems.Add(sys);
+            }
+        }
+
+        // find the right scene
+        string targetScene = SceneManager.GetActiveScene().name;
+        if (galaxyDatabase != null)
+        {
+            StarSystemData sys = galaxyDatabase.allSystems
+                                   .FirstOrDefault(s => s.displayName == data.currentStarSystem);
+            if (sys != null) targetScene = sys.sceneName;
+        }
+
+        if (targetScene == SceneManager.GetActiveScene().name)
         {
             FinishApply(data);
         }
         else
         {
-            SceneManager.LoadScene(data.currentStarSystem);
+            SceneManager.LoadScene(targetScene);
             SceneManager.sceneLoaded += (s, m) =>
             {
                 FinishApply(data);
@@ -179,16 +221,22 @@ public class GameManager : MonoBehaviour
         TryCachePlayer();
 
         if (player != null)
-            player.transform.position = new Vector3(data.playerPosX, data.playerPosY, data.playerPosZ);
+            player.transform.position = new Vector3(data.playerPosX,
+                                                    data.playerPosY,
+                                                    data.playerPosZ);
 
         if (playerStats != null)
         {
             playerStats.currentHealth = data.playerHealth;
             playerStats.SyncHealthBar();
         }
+
+        StarSystemIdentifier id = FindObjectOfType<StarSystemIdentifier>();
+        if (id != null) RegisterCurrentSystem(id.starSystem);
     }
 
-    /* ───── helper for PlanetLandingTrigger ───── */
+    /* ─────────  PLANET LOAD HELPER  ───────── */
+    /// <summary>Used by PlanetLandingTrigger to leave orbit.</summary>
     public void LoadPlanetScene(string planetSceneName)
     {
         SceneManager.LoadScene(planetSceneName);
@@ -206,12 +254,15 @@ public class GameManager : MonoBehaviour
         hideNotificationCoroutine = StartCoroutine(HideNotifAfterDelay());
     }
 
-    private IEnumerator HideNotifAfterDelay()
+    private System.Collections.IEnumerator HideNotifAfterDelay()
     {
         yield return new WaitForSeconds(notificationDuration);
         saveNotificationPanel.SetActive(false);
     }
-    
+
+    /* ─────────  PAUSE / RESUME  ───────── */
+    private int pauseCounter = 0;
+
     public void PauseGame()
     {
         pauseCounter++;

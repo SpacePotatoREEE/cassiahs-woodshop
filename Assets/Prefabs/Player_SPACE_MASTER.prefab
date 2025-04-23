@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 503594181349134207}
   - component: {fileID: 2572327188641000590}
   - component: {fileID: 4540707722772252912}
+  - component: {fileID: 731123439036524596}
   m_Layer: 7
   m_Name: Player_SPACE_MASTER
   m_TagString: Player
@@ -283,6 +284,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventory: []
   currentIndex: 0
+--- !u!114 &731123439036524596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667069528744625763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8feb969cab61fc42aaab638b2300ff3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  brakeTargetSpeed: 5
+  brakeDuration: 2
+  spoolUpTime: 1
+  launchSpeed: 100
+  arrivalOffset: 100
+  movementScript: {fileID: 727887392667572011}
 --- !u!1 &2274380859335425377
 GameObject:
   m_ObjectHideFlags: 0

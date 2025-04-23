@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57fc8497bba04824e9ee7253853461a2, type: 3}
+  m_Name: StarSystem_Pirates_Kron
+  m_EditorClassIdentifier: 
+  displayName: kron
+  sceneName: Space_B
+  mapPosition: {x: 4.57, y: 2.24}
+  ownerFaction: 1
+  neighborSystems:
+  - {fileID: 11400000, guid: c67282cb590d6474580313e1f673615b, type: 2}
+  discoveredAtStart: 0

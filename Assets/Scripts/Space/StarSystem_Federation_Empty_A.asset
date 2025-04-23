@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57fc8497bba04824e9ee7253853461a2, type: 3}
+  m_Name: StarSystem_Federation_Empty_A
+  m_EditorClassIdentifier: 
+  displayName: Empty_A
+  sceneName: Space_Federation_Empty_A
+  mapPosition: {x: 2.79, y: 2.25}
+  ownerFaction: 5
+  neighborSystems:
+  - {fileID: 11400000, guid: 0531a1b7217076f459eab89bec53545b, type: 2}
+  - {fileID: 11400000, guid: 84548f2909bff6c428163d2dcba22a88, type: 2}
+  discoveredAtStart: 0

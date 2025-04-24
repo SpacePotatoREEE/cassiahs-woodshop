@@ -17,6 +17,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Planet_A.unity
     guid: 05f37431d359b6949b359c626c74214e
+  - enabled: 1
+    path: Assets/Scenes/Space_Uninhabited_Empty_A.unity
+    guid: bdbafb24dc5d80542b35ef8ecde6e452
+  - enabled: 1
+    path: Assets/Scenes/Space_Uninhabited_Empty_B.unity
+    guid: b4c7f067b6b6e584f90405f166d7981c
+  - enabled: 1
+    path: Assets/Scenes/Space_Uninhabited_Empty_C.unity
+    guid: 9487b87582b107d459eb3ef4b5ae8180
+  - enabled: 1
+    path: Assets/Scenes/Space_Uninhabited_Empty_D.unity
+    guid: 550ba68af8f3a0f4e8d13cfcdbe28e80
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

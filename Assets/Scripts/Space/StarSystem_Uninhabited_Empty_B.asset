@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 57fc8497bba04824e9ee7253853461a2, type: 3}
-  m_Name: StarSystem_Federation_Earth
+  m_Name: StarSystem_Uninhabited_Empty_B
   m_EditorClassIdentifier: 
-  displayName: Earth
-  sceneName: Space_A
-  mapPosition: {x: 0, y: 0}
-  ownerFaction: 0
+  displayName: Empty_B
+  sceneName: Space_Uninhabited_Empty_B
+  mapPosition: {x: 5.03, y: 5.18}
+  ownerFaction: 5
   neighborSystems:
   - {fileID: 11400000, guid: c67282cb590d6474580313e1f673615b, type: 2}
-  discoveredAtStart: 1
-  previewSprite: {fileID: 21300000, guid: 82c361e5013cec741b3b8a7c5b3eb439, type: 3}
-  description: A vibrant blue-green jewel adrift in the cosmic sea, brimming with
-    the promise of life and wonder.
+  - {fileID: 11400000, guid: 8cfc0739598f3e2458cbd8db86ab6f79, type: 2}
+  discoveredAtStart: 0
+  previewSprite: {fileID: 21300000, guid: c5f591eb740f4d3459ab39087d85c999, type: 3}
+  description: nothing much

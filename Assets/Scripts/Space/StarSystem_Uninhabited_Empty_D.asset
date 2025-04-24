@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 57fc8497bba04824e9ee7253853461a2, type: 3}
-  m_Name: StarSystem_Pirates_Kron
+  m_Name: StarSystem_Uninhabited_Empty_D
   m_EditorClassIdentifier: 
-  displayName: kron
-  sceneName: Space_B
-  mapPosition: {x: 4.57, y: 2.24}
-  ownerFaction: 1
+  displayName: Empty_D
+  sceneName: Space_Uninhabited_Empty_D
+  mapPosition: {x: -1.55, y: 12.28}
+  ownerFaction: 5
   neighborSystems:
-  - {fileID: 11400000, guid: c67282cb590d6474580313e1f673615b, type: 2}
+  - {fileID: 11400000, guid: 8cfc0739598f3e2458cbd8db86ab6f79, type: 2}
   discoveredAtStart: 0
-  previewSprite: {fileID: 21300000, guid: bcea3788811c52b48ae777e939eadbe7, type: 3}
-  description: If ye be brave or fool enough to face a pirate's curse, proceed.
+  previewSprite: {fileID: 21300000, guid: c5f591eb740f4d3459ab39087d85c999, type: 3}
+  description: who comes here?

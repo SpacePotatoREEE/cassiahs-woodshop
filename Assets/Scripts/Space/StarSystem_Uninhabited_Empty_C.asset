@@ -10,13 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 57fc8497bba04824e9ee7253853461a2, type: 3}
-  m_Name: StarSystem_Federation_Empty_A
+  m_Name: StarSystem_Uninhabited_Empty_C
   m_EditorClassIdentifier: 
-  displayName: Empty_A
-  sceneName: Space_Federation_Empty_A
-  mapPosition: {x: 2.79, y: 2.25}
+  displayName: Empty_C
+  sceneName: Space_Uninhabited_Empty_C
+  mapPosition: {x: -1.39, y: 6.85}
   ownerFaction: 5
   neighborSystems:
-  - {fileID: 11400000, guid: 0531a1b7217076f459eab89bec53545b, type: 2}
-  - {fileID: 11400000, guid: 84548f2909bff6c428163d2dcba22a88, type: 2}
+  - {fileID: 11400000, guid: 5c14a24293b3d704ab2de45c85fef33c, type: 2}
+  - {fileID: 11400000, guid: bf9f66bd468db624fad388d006a6f1ba, type: 2}
   discoveredAtStart: 0
+  previewSprite: {fileID: 21300000, guid: c5f591eb740f4d3459ab39087d85c999, type: 3}
+  description: nothing here either

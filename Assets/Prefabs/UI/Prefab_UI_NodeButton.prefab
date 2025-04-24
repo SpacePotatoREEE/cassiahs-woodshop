@@ -88,3 +88,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 215ff4a99d357e34985a79bd1101ae41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  labelFontSize: 26
+  labelOffset: {x: 22, y: 0}

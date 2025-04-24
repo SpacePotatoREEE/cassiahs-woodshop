@@ -28,4 +28,6 @@ public class SaveData
 
     /// <summary>Remaining systems in a pre‑plotted course, if any.</summary>
     public List<string> queuedRoute = new();
+    
+    public List<string> discoveredSystemIds = new ();   // new line
 }

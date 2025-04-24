@@ -28,6 +28,14 @@ public class GameManager : MonoBehaviour
         currentSystem = sys;
         if (sys != null) discoveredSystems.Add(sys);
     }
+    
+    /* ─── discovery API used by GalaxyMapController ─── */
+    public bool IsSystemDiscovered(StarSystemData sys) => discoveredSystems.Contains(sys);
+
+    public void AddDiscoveredSystem(StarSystemData sys)
+    {
+        if (sys != null) discoveredSystems.Add(sys);
+    }
 
     /* ───────────────  PLAYER  ──────────────── */
     [Header("Player Reference (auto‑filled)")]

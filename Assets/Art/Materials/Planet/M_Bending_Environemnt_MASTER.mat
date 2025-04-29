@@ -116,7 +116,7 @@ Material:
     - _AlphaToMask: 0
     - _BendExponent: 2.56
     - _BendRadius: 7.11
-    - _BendStrength: 0.1
+    - _BendStrength: 0
     - _BitangentSign: 0.9
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
@@ -170,7 +170,7 @@ Material:
     - _Metallic_Tile_Offset: {r: 1, g: 1, b: 0, a: 0}
     - _NormalFlip: {r: -1, g: -1, b: -1, a: 0}
     - _Normal_Tile_Offset: {r: 39.2, g: 1, b: 0, a: 0}
-    - _PlayerPos: {r: 5.9203595e-16, g: 0, b: 0.00000027380884, a: 0}
+    - _PlayerPos: {r: -0.52699643, g: 0, b: 0.3318521, a: 0}
     - _Smoothness_Tiles_Offset: {r: 1, g: 1, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Texture_Tint: {r: 1, g: 1, b: 1, a: 0}

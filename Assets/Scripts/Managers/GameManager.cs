@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour
 {
     /* ───────────────  SINGLETON  ─────────────── */
     public static GameManager Instance { get; private set; }
+    
+    // GameManager.cs  (top-level field)
+    private static bool saveLoadedOnce = false;
 
     /* ───────────────  GALAXY  ─────────────── */
     [Header("Galaxy Database (drag asset here)")]
@@ -85,7 +88,12 @@ public class GameManager : MonoBehaviour
     {
         TryCachePlayer();
         UpdateCreditsUI();
-        AutoLoadOnStartup();
+        
+        if (!saveLoadedOnce)
+        {
+            AutoLoadOnStartup();
+            saveLoadedOnce = true;        // ← never load again this session
+        }
     }
 
     private void OnDestroy()
@@ -162,6 +170,7 @@ public class GameManager : MonoBehaviour
 
             // vitals
             playerHealth = playerStats.currentHealth,
+            playerEnergy      = playerStats.CurrentEnergy,
             playerLevel  = 1,
 
             // economy
@@ -215,12 +224,16 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene(targetScene);
-            SceneManager.sceneLoaded += (s, m) =>
+            // we need a named handler so we can remove it
+            UnityEngine.Events.UnityAction<Scene, LoadSceneMode> handler = null;
+            handler = (s, m) =>
             {
                 FinishApply(data);
-                SceneManager.sceneLoaded -= null;
+                SceneManager.sceneLoaded -= handler;   // <-- remove THIS handler only
             };
+
+            SceneManager.sceneLoaded += handler;
+            SceneManager.LoadScene(targetScene);
         }
     }
 
@@ -236,6 +249,11 @@ public class GameManager : MonoBehaviour
         if (playerStats != null)
         {
             playerStats.currentHealth = data.playerHealth;
+            
+            // Handle missing (pre-energy-patch) saves gracefully
+            float restoredEnergy = (data.playerEnergy <= 0f) ? playerStats.maxEnergy : data.playerEnergy;
+            playerStats.CurrentEnergy = Mathf.Clamp(restoredEnergy, 0f, playerStats.maxEnergy);
+            
             playerStats.SyncHealthBar();
         }
 

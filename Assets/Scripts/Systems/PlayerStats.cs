@@ -1,68 +1,133 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;     // for FindObjectOfType in other scenes
+using System;                          // for Environment.StackTrace
 using System.Collections;
 
+/// <summary>
+/// Persistent stats for the space-ship player.
+/// Keeps Health and Energy in sync with the HUD.
+/// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerStats : MonoBehaviour
 {
-    /* ─────────────────────────  CONFIG  ───────────────────────── */
+    /* ───────────────  HEALTH  ─────────────── */
     [Header("Player Health")]
     public float maxHealth = 100f;
     public float currentHealth;
 
+    /* ───────────────  ENERGY  ─────────────── */
+    [Header("Player Energy")]
+    [Tooltip("Base energy capacity for this hull / ship.")]
+    public float maxEnergy = 100f;
+
+    // We track energy through a PROPERTY so we can log every write
+    [SerializeField] private float _currentEnergy;
+    public  float CurrentEnergy
+    {
+        get => _currentEnergy;
+        set
+        {
+            if (Mathf.Approximately(_currentEnergy, value)) return;   // no change
+
+            Debug.Log($"[Energy SET] {_currentEnergy} → {value}\n{Environment.StackTrace}");
+            _currentEnergy = value;
+
+            // update HUD immediately
+            if (playerEnergyBar != null)
+                playerEnergyBar.SetEnergy(_currentEnergy);
+        }
+    }
+
+    /* ───────── DISABLE/DESTROY CONFIG ───────── */
     [Header("Disable Threshold")]
     [Range(0f, 1f)]
-    [Tooltip("If currentHealth / maxHealth drops below this, the ship is 'disabled'.")]
+    [Tooltip("If currentHealth / maxHealth drops below this, the ship is ‘disabled’.")]
     public float disableShipAtPercent = 0.3f;
 
     [Header("Disable Behaviour")]
-    public bool disableMovement = true;
-    public bool disableWeapon   = true;
+    public bool  disableMovement  = true;
+    public bool  disableWeapon    = true;
     public float slowDownDuration = 2f;
 
+    /* ───────────────  REFERENCES  ─────────────── */
     [Header("References")]
-    [Tooltip("Optional movement script (e.g., ShipDriftController).")]
-    public MonoBehaviour movementScript;
-    [Tooltip("Optional weapon script.")]
-    public MonoBehaviour weaponScript;
-    [Tooltip("Optional UI health bar.")]
-    public PlayerHealthBar playerHealthBar;
+    public MonoBehaviour   movementScript;     // optional
+    public MonoBehaviour   weaponScript;       // optional
+    public PlayerHealthBar playerHealthBar;    // optional
+    public PlayerEnergyBar playerEnergyBar;    // optional
 
-    /* ──────────────────────  INTERNAL STATE  ───────────────────── */
-    private bool isDisabled  = false;
-    private bool isDestroyed = false;
+    /* ───────────  INTERNAL STATE  ─────────── */
+    private bool      isDisabled  = false;
+    private bool      isDestroyed = false;
     private Rigidbody rb;
 
-    /* ─────────────────────────  UNITY  ─────────────────────────── */
+    /* ═════════════  LIFECYCLE  ═════════════ */
+
     private void Awake()
     {
-        currentHealth = maxHealth;
-        rb = GetComponent<Rigidbody>();
+        Debug.Log($"PlayerStats Awake on {gameObject.name}, instanceID {GetInstanceID()}");
 
-        // Init health bar
+        rb = GetComponent<Rigidbody>();
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        // Initialise starting values
+        currentHealth = maxHealth;
+        CurrentEnergy = maxEnergy;
+
+        CacheBars();
+        InitialiseBars();
+
+        Debug.Log($"PlayerStats Start on {gameObject.name}  id:{GetInstanceID()}  energy:{CurrentEnergy}");
+    }
+
+    private void CacheBars()
+    {
+        if (playerHealthBar == null)
+            playerHealthBar = FindObjectOfType<PlayerHealthBar>(true);
+
+        if (playerEnergyBar == null)
+            playerEnergyBar = FindObjectOfType<PlayerEnergyBar>(true);
+    }
+
+    private void InitialiseBars()
+    {
         if (playerHealthBar != null)
         {
             playerHealthBar.SetMaxHealth(maxHealth);
             playerHealthBar.SetHealth(currentHealth);
         }
 
-        // Persist across scenes
-        DontDestroyOnLoad(gameObject);
-    }
-    
-    private void Start()
-    {
-        if (playerHealthBar == null)
-            playerHealthBar = FindObjectOfType<PlayerHealthBar>(true);  // include inactive HUD
-
-        if (playerHealthBar != null)
+        if (playerEnergyBar != null)
         {
-            playerHealthBar.SetMaxHealth(maxHealth);   // ← sets slider.maxValue = 400
-            playerHealthBar.SetHealth(currentHealth);  // ← shows full bar
+            playerEnergyBar.SetMaxEnergy(maxEnergy);
+            playerEnergyBar.SetEnergy(CurrentEnergy);
         }
     }
 
-    /* ────────────────────────  PUBLIC API  ─────────────────────── */
+    /* ═════════════  ENERGY API  ═════════════ */
+    public bool ConsumeEnergy(float amount)
+    {
+        Debug.Log($"[ConsumeEnergy] Before: {CurrentEnergy}  need:{amount}  on {GetInstanceID()}");
+        
+        if (CurrentEnergy < amount) return false;
+        CurrentEnergy -= amount;          // property will update the bar
+        
+        Debug.Log($"[ConsumeEnergy]  After: {CurrentEnergy}");
+        
+        return true;
+    }
 
+    public void AddEnergy(float amount)
+    {
+        CurrentEnergy = Mathf.Clamp(CurrentEnergy + amount, 0f, maxEnergy);
+    }
+
+    public bool HasEnoughEnergy(float amount) => CurrentEnergy >= amount;
+
+    /* ═════════════  HEALTH API  ═════════════ */
     public void TakeDamage(float damage)
     {
         if (isDestroyed) return;
@@ -71,11 +136,7 @@ public class PlayerStats : MonoBehaviour
         Debug.Log($"[PlayerStats] Took {damage} dmg → {currentHealth}/{maxHealth}");
         SyncHealthBar();
 
-        if (currentHealth == 0f)
-        {
-            Die();
-            return;
-        }
+        if (currentHealth == 0f) { Die(); return; }
 
         if (!isDisabled && currentHealth / maxHealth < disableShipAtPercent)
             EnterDisabledState();
@@ -86,26 +147,33 @@ public class PlayerStats : MonoBehaviour
         if (isDestroyed) return;
 
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
-        Debug.Log($"[PlayerStats] Healed {amount} → {currentHealth}/{maxHealth}");
         SyncHealthBar();
-
-        // Optionally exit disabled state here if you want
     }
 
-    /// <summary>Synchronise UI with the currentHealth value.</summary>
+    public void FullHeal()
+    {
+        currentHealth = maxHealth;
+        SyncHealthBar();
+    }
+
+    /* ═════════════  UI SYNC  ═════════════ */
     public void SyncHealthBar()
     {
         if (playerHealthBar != null)
             playerHealthBar.SetHealth(currentHealth);
     }
 
+    public void SyncEnergyBar()        // kept for compatibility
+    {
+        if (playerEnergyBar != null)
+            playerEnergyBar.SetEnergy(CurrentEnergy);
+    }
+
     public bool IsDisabledOrDestroyed() => isDisabled || isDestroyed;
 
-    /* ──────────────────────  INTERNAL LOGIC  ───────────────────── */
-
+    /* ═══════════ INTERNAL LOGIC ═══════════ */
     private void Die()
     {
-        Debug.Log("[PlayerStats] Player died");
         isDestroyed = true;
         Destroy(gameObject);
     }
@@ -113,7 +181,6 @@ public class PlayerStats : MonoBehaviour
     private void EnterDisabledState()
     {
         isDisabled = true;
-        Debug.Log("[PlayerStats] Ship disabled");
 
         if (disableMovement && movementScript != null) movementScript.enabled = false;
         if (disableWeapon   && weaponScript   != null) weaponScript.enabled   = false;
@@ -124,7 +191,7 @@ public class PlayerStats : MonoBehaviour
     private IEnumerator SlowDownRoutine()
     {
         Vector3 startVel = rb ? rb.linearVelocity : Vector3.zero;
-        float timer = 0f;
+        float   timer    = 0f;
 
         while (timer < slowDownDuration)
         {
@@ -135,13 +202,5 @@ public class PlayerStats : MonoBehaviour
         }
 
         if (rb) rb.linearVelocity = Vector3.zero;
-    }
-    
-    /// <summary>Instantly restore to maximum health.</summary>
-    public void FullHeal()
-    {
-        currentHealth = maxHealth;   // assumes these fields already exist
-        // If you broadcast health changes to the HUD, invoke that event here:
-        // OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 }

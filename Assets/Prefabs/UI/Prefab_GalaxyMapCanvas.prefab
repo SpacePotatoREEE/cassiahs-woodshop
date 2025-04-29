@@ -479,6 +479,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6764590025945305095}
   - component: {fileID: 5441709069898161684}
+  - component: {fileID: 7793812502194016583}
   - component: {fileID: 775512464272972749}
   - component: {fileID: 6495783845900759059}
   - component: {fileID: 8291672829064012701}
@@ -489,7 +490,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6764590025945305095
 RectTransform:
   m_ObjectHideFlags: 0
@@ -533,6 +534,19 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 50
   m_TargetDisplay: 0
+--- !u!114 &7793812502194016583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7560733311887424119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 418b79de6c4d0a043aa5418be92ff90a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hideInEditMode: 1
 --- !u!114 &775512464272972749
 MonoBehaviour:
   m_ObjectHideFlags: 0

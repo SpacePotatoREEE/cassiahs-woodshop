@@ -1,33 +1,28 @@
 using System;
 using System.Collections.Generic;
 
-/// <summary>
-/// Serializable payload written to disk by SaveSystem.
-/// </summary>
+/// <summary>Serializable payload written to disk by <see cref="SaveSystem"/>.</summary>
 [Serializable]
 public class SaveData
 {
-    // ───── Player transform ─────
+    /* ───── Player Transform ───── */
     public float playerPosX;
     public float playerPosY;
     public float playerPosZ;
 
-    // ───── Vital stats ─────
+    /* ───── Vital stats ───── */
     public float playerHealth;
     public int   playerLevel;
 
-    // ───── Currency ─────
+    /* ───── New: Energy ───── */
+    public float playerEnergy;
+
+    /* ───── Currency ───── */
     public int credits;
 
-    // ───── Galaxy navigation ─────
-    /// <summary>Display‑name of the StarSystem the player is currently in.</summary>
-    public string currentStarSystem;
-
-    /// <summary>Systems the player has already discovered (for fog‑of‑war).</summary>
-    public List<string> discoveredSystems = new();
-
-    /// <summary>Remaining systems in a pre‑plotted course, if any.</summary>
-    public List<string> queuedRoute = new();
-    
-    public List<string> discoveredSystemIds = new ();   // new line
+    /* ───── Galaxy navigation ───── */
+    public string        currentStarSystem;
+    public List<string>  discoveredSystems   = new();
+    public List<string>  queuedRoute         = new();
+    public List<string>  discoveredSystemIds = new();
 }

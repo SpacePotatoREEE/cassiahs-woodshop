@@ -242,6 +242,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 500
   currentHealth: 500
+  maxEnergy: 100
+  currentEnergy: 100
   disableShipAtPercent: 0.066
   disableMovement: 1
   disableWeapon: 1
@@ -301,6 +303,7 @@ MonoBehaviour:
   spoolUpTime: 1
   launchSpeed: 100
   arrivalOffset: 100
+  jumpEnergyCost: 10
   movementScript: {fileID: 727887392667572011}
 --- !u!1 &2274380859335425377
 GameObject:

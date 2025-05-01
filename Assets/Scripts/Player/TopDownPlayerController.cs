@@ -3,46 +3,57 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class TopDownPlayerController : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    /* ─────────────  Inspector  ───────────── */
+    [Header("Movement")]
+    [SerializeField] private float moveSpeed = 5f;
 
+    [Header("Bending")]
+    [Tooltip("ScriptableObject containing every material that needs bending.")]
+    [SerializeField] private BendMaterialList bendMaterials;
+
+    [Tooltip("Transform used as the player’s position reference; if left blank " +
+             "the script uses its own Transform.")]
+    [SerializeField] private Transform playerTransform;
+
+    /* ─────────────  Internals  ───────────── */
     private Rigidbody rb;
-    public Material horizonBendMaterial;
-    public Transform playerTransform;
+    private static readonly int PlayerPosID = Shader.PropertyToID("_PlayerPos");
 
-    void Awake()
+    /* ─────────────  Lifecycle  ───────────── */
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        // For a top-down game, you usually freeze rotation so it doesn't tip over
-        rb.freezeRotation = true;
+        rb.freezeRotation = true;                 // top-down characters shouldn’t tip over
+        if (playerTransform == null) playerTransform = transform;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        // Read input
-        float horizontal = Input.GetAxis("Horizontal");  // default WASD / arrow keys
-        float vertical = Input.GetAxis("Vertical");
+        // Standard top-down rigidbody movement
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical   = Input.GetAxis("Vertical");
 
-        // Create a movement vector in XZ plane
-        Vector3 move = new Vector3(horizontal, 0f, vertical);
+        Vector3 move = new(horizontal, 0f, vertical);
+        Vector3 nextPos = rb.position + move * moveSpeed * Time.fixedDeltaTime;
+        rb.MovePosition(nextPos);
 
-        // Adjust speed and deltaTime
-        Vector3 newPosition = rb.position + move * moveSpeed * Time.fixedDeltaTime;
-
-        // Move the rigidbody
-        rb.MovePosition(newPosition);
-
-        // If you want your character to face the movement direction, do this:
-        if (move.sqrMagnitude > 0.001f)
-        {
-            Quaternion newRotation = Quaternion.LookRotation(move, Vector3.up);
-            rb.MoveRotation(newRotation);
-        }
+        if (move.sqrMagnitude > 1e-3f)            // turn to face motion direction
+            rb.MoveRotation(Quaternion.LookRotation(move, Vector3.up));
     }
-    
-    void Update()
+
+    private void Update()
     {
-        Vector3 playerPos = playerTransform.position;
-        // We only care about XZ for bending
-        horizonBendMaterial.SetVector("_PlayerPos", new Vector4(playerPos.x, 0, playerPos.z, 0));
+        // Bail out fast if there’s nothing to update
+        if (bendMaterials == null ||
+            bendMaterials.materials == null ||
+            bendMaterials.materials.Count == 0)
+            return;
+
+        Vector3 p = playerTransform.position;
+        Vector4 playerPos4 = new(p.x, 0f, p.z, 0f);   // Y not used by the shader
+
+        // Write to every listed material
+        foreach (Material m in bendMaterials.materials)
+            if (m != null) m.SetVector(PlayerPosID, playerPos4);
     }
 }

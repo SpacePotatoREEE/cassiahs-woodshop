@@ -1,42 +1,61 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;                     // for StringComparison
 
-/// Drop this on Prefab_HUD_Space
+/// Attach this to your HUD prefab (the object that already has the Canvas).
+/// Drag the Space and Planet HUD images (or panels) into the two fields.
 [RequireComponent(typeof(Canvas))]
-public class SpaceHudToggler : MonoBehaviour
+public class SceneHudImageSwitcher : MonoBehaviour
 {
-    [SerializeField] private string[] spaceScenes = { "Space_A" };  // add more
+    [Header("HUD Image Roots")]
+    [Tooltip("Shown when the scene name begins with \"Space\".")]
+    [SerializeField] private GameObject spaceHudImage;
 
-    private Canvas hudCanvas;
+    [Tooltip("Shown when the scene name begins with \"Planet\".")]
+    [SerializeField] private GameObject planetHudImage;
 
     private void Awake()
     {
-        hudCanvas = GetComponent<Canvas>();
-        DontDestroyOnLoad(gameObject);                // survive every scene
-        SceneManager.sceneLoaded   += (_,__) => Refresh();
-        SceneManager.sceneUnloaded += _      => Refresh();
-        Refresh();                                    // run once for the scene we’re already in
+        // Make the whole HUD survive scene loads.
+        DontDestroyOnLoad(gameObject);
+
+        // Refresh whenever Unity finishes loading a new scene.
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        // Also do an immediate refresh for the scene we’re already in.
+        Refresh();
     }
 
     private void OnDestroy()
     {
-        SceneManager.sceneLoaded   -= (_,__) => Refresh();
-        SceneManager.sceneUnloaded -= _      => Refresh();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Refresh();
+    }
+
+    /// <summary>
+    /// Enables the image that matches the current scene name prefix and
+    /// disables the other. If the prefix is neither “Space” nor “Planet”,
+    /// both images are hidden.
+    /// </summary>
     private void Refresh()
     {
-        bool show = false;
-        for (int i = 0; i < SceneManager.sceneCount; i++)
+        string sceneName = SceneManager.GetActiveScene().name;
+
+        bool isSpace  = sceneName.StartsWith("Space",  StringComparison.OrdinalIgnoreCase);
+        bool isPlanet = sceneName.StartsWith("Planet", StringComparison.OrdinalIgnoreCase);
+
+        if (spaceHudImage  != null) spaceHudImage.SetActive(isSpace);
+        if (planetHudImage != null) planetHudImage.SetActive(isPlanet);
+
+        // Optional safety: hide both if the prefix didn’t match either.
+        if (!isSpace && !isPlanet)
         {
-            var s = SceneManager.GetSceneAt(i);
-            if (s.isLoaded &&
-                System.Array.Exists(spaceScenes, n => n == s.name))
-            {
-                show = true;
-                break;
-            }
+            if (spaceHudImage  != null) spaceHudImage.SetActive(false);
+            if (planetHudImage != null) planetHudImage.SetActive(false);
         }
-        hudCanvas.enabled = show;         // Canvas on/off but script keeps running
     }
 }

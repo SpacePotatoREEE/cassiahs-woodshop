@@ -55,7 +55,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: d96cb93e0f64a504e8d9bc19c2a6b8f0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 687657139815255175}
   - component: {fileID: 3883229118437796934}
   - component: {fileID: 4614102537869901891}
+  - component: {fileID: 7272123627199899555}
   m_Layer: 8
   m_Name: Ammo_Bullet_FromPlayer
   m_TagString: Untagged
@@ -229,3 +230,16 @@ MonoBehaviour:
   allowedLayers:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &7272123627199899555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8558436746612208066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9b96bce5b8e31d49847002646307598, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  computeVelocityFromTransform: 0

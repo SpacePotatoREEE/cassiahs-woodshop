@@ -1,22 +1,49 @@
+// Assets/Scripts/UI/HideInEditMode.cs
+// Unity 6 • URP
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /// <summary>
-/// Attach to any UI / HUD root.
-/// • When NOT playing, the object is disabled if <see cref="hideInEditMode"/> is true.  
-/// • When entering Play Mode, it re-enables itself automatically.
+/// Keeps this GameObject disabled while in the editor so it doesn’t clutter the
+/// scene, but ensures it is active when entering Play-Mode.
 /// </summary>
-[ExecuteAlways]              // run in Edit mode too
-public class HideInEditMode : MonoBehaviour
+[ExecuteAlways]                   // run in Edit-Mode too
+[DisallowMultipleComponent]
+public sealed class HideInEditMode : MonoBehaviour
 {
-    [Tooltip("Hide this UI object while in the Editor (Play Mode ignores this).")]
-    [SerializeField] private bool hideInEditMode = true;
+    [Tooltip("If true, the object is hidden in the Scene view while editing.")]
+    public bool hideInEditMode = true;
 
-    private void OnEnable()   => Refresh();
-    private void OnValidate() => Refresh();   // called when you tick/untick in Inspector
+    /* ─────────────────────────────────────────────────────────────── */
+    /*  EDITOR + RUNTIME                                              */
+    /* ─────────────────────────────────────────────────────────────── */
 
-    private void Refresh()
+    void Awake()        => ApplyVisibility();   // covers domain-reload
+    void OnEnable()     => ApplyVisibility();   // covers prefab instantiation
+#if UNITY_EDITOR
+    void OnValidate()   => ApplyVisibility();   // respond to Inspector changes
+#endif
+
+    /* ─────────────────────────────────────────────────────────────── */
+    /*  IMPLEMENTATION                                                */
+    /* ─────────────────────────────────────────────────────────────── */
+
+    void ApplyVisibility()
     {
-        bool playing = Application.isPlaying;
-        gameObject.SetActive(playing || !hideInEditMode);
+#if UNITY_EDITOR
+        if (!Application.isPlaying)             // EDIT-MODE
+        {
+            bool shouldBeActive = !hideInEditMode;
+            // Avoid the “already being activated” error:
+            if (gameObject.activeSelf != shouldBeActive)
+                gameObject.SetActive(shouldBeActive);
+            return;
+        }
+#endif
+        // PLAY-MODE: always enable so gameplay scripts can rely on it
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
     }
 }

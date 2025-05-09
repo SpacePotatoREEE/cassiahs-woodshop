@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 1105654604525795868}
   - component: {fileID: 8072466045535109497}
   - component: {fileID: 2801052120982425738}
+  - component: {fileID: 9089482604327914767}
   m_Layer: 6
   m_Name: SpaceNPC_01
   m_TagString: Untagged
@@ -209,6 +210,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boardingPanelPrefab: {fileID: 8141400531047351096, guid: 15a76473c9cd17443a40692379a6f29a, type: 3}
   boardPrompt: {fileID: 3196936763952660474}
+--- !u!114 &9089482604327914767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667069528744625763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9b96bce5b8e31d49847002646307598, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  computeVelocityFromTransform: 0
 --- !u!1 &1741782896576879927
 GameObject:
   m_ObjectHideFlags: 0

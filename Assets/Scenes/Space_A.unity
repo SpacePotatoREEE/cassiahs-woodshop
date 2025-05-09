@@ -25,7 +25,7 @@ RenderSettings:
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.3479886, g: 0.42895976, b: 0.6415094, a: 1}
+  m_SubtractiveShadowColor: {r: 0.060875755, g: 0.10501954, b: 0.2264151, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: de2c72a36b41ffd409a8dcaa390391de, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
@@ -130,7 +130,6 @@ GameObject:
   - component: {fileID: 18526379}
   - component: {fileID: 18526382}
   - component: {fileID: 18526381}
-  - component: {fileID: 18526380}
   m_Layer: 0
   m_Name: VFX_Space_Dust_Close
   m_TagString: Untagged
@@ -153,20 +152,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1169903124}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &18526380
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 18526378}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f83c77d607f431c43923289be587c608, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerLayerName: PlayerShip
-  followRadius: 5
 --- !u!73398921 &18526381
 VFXRenderer:
   serializedVersion: 1
@@ -356,7 +341,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &318764043
 Transform:
   m_ObjectHideFlags: 0
@@ -366,7 +351,7 @@ Transform:
   m_GameObject: {fileID: 318764042}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -7.07, z: 0}
+  m_LocalPosition: {x: 0, y: -11, z: 0}
   m_LocalScale: {x: 84.54557, y: 27.256058, z: 44.296646}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -694,7 +679,7 @@ GameObject:
   - component: {fileID: 1185725366}
   - component: {fileID: 1185725369}
   - component: {fileID: 1185725368}
-  - component: {fileID: 1185725367}
+  - component: {fileID: 1185725370}
   m_Layer: 0
   m_Name: VFX_Space_Dust
   m_TagString: Untagged
@@ -717,20 +702,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1169903124}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1185725367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1185725365}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f83c77d607f431c43923289be587c608, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerLayerName: PlayerShip
-  followRadius: 20
 --- !u!73398921 &1185725368
 VFXRenderer:
   serializedVersion: 1
@@ -801,7 +772,7 @@ VisualEffect:
       - m_Value: 0.2
         m_Name: Size Max
         m_Overridden: 1
-      - m_Value: 0.05
+      - m_Value: 0.1
         m_Name: Size Min
         m_Overridden: 1
       - m_Value: 12.8
@@ -816,10 +787,10 @@ VisualEffect:
       - m_Value: 1.7
         m_Name: Perlin Noise Frequency
         m_Overridden: 1
-      - m_Value: 1.01
+      - m_Value: 1.07
         m_Name: SwirlFalloff
         m_Overridden: 1
-      - m_Value: 0.13
+      - m_Value: 1.36
         m_Name: SwirlStrength
         m_Overridden: 1
       - m_Value: -1
@@ -867,10 +838,10 @@ VisualEffect:
         m_Overridden: 1
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 0.01886791, y: 0.0074047646, z: 0.004538978, w: 1}
+      - m_Value: {x: 0, y: 0.003921569, z: 0.003921569, w: 1}
         m_Name: Color_B
         m_Overridden: 1
-      - m_Value: {x: 0.02400364, y: 0.015797436, z: 0.047169805, w: 1}
+      - m_Value: {x: 0, y: 0.007843138, z: 0.003921569, w: 1}
         m_Name: Color_A
         m_Overridden: 1
       - m_Value: {x: 4.0472007, y: 0, z: 0.1253036, w: 1}
@@ -892,6 +863,9 @@ VisualEffect:
       - m_Value: 5
         m_Name: Perlin Noise Octaves
         m_Overridden: 1
+      - m_Value: 6
+        m_Name: InfluencerCount
+        m_Overridden: 1
     m_Matrix4x4f:
       m_Array: []
     m_AnimationCurve:
@@ -905,6 +879,21 @@ VisualEffect:
         m_Overridden: 1
     m_Bool:
       m_Array: []
+--- !u!114 &1185725370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1185725365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92f9775590ef95d43aaeffb108b51e1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  followRadius: 250
+  maxInfluencers: 256
+  playerLayerName: PlayerShips
 --- !u!1 &1327324729
 GameObject:
   m_ObjectHideFlags: 0
@@ -1105,7 +1094,7 @@ Light:
   serializedVersion: 11
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 1.05
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208

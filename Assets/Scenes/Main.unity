@@ -189,12 +189,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4540707722772252912, guid: e4209eb6c86ef9b449597b829813cc20, type: 3}
       propertyPath: inventory.Array.data[0].qty
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4540707722772252912, guid: e4209eb6c86ef9b449597b829813cc20, type: 3}
       propertyPath: inventory.Array.data[0].weapon
       value: 
-      objectReference: {fileID: 11400000, guid: 2038604a765698841ac2bb9e5b569647, type: 2}
+      objectReference: {fileID: 11400000, guid: a98d767dcc491634fab8f917eb547192, type: 2}
     - target: {fileID: 6367330807462432140, guid: e4209eb6c86ef9b449597b829813cc20, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 5.899994

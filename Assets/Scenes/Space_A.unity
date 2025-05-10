@@ -119,210 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &18526378
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 18526379}
-  - component: {fileID: 18526382}
-  - component: {fileID: 18526381}
-  m_Layer: 0
-  m_Name: VFX_Space_Dust_Close
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &18526379
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 18526378}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 9.808144, y: -2.4, z: 1.6118793}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1169903124}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!73398921 &18526381
-VFXRenderer:
-  serializedVersion: 1
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 18526378}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 0
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!2083052967 &18526382
-VisualEffect:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 18526378}
-  m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: 07a415da5e67ade4b92add50cdb16d07, type: 3}
-  m_InitialEventName: OnPlay
-  m_InitialEventNameOverriden: 0
-  m_StartSeed: 0
-  m_ResetSeedOnPlay: 1
-  m_AllowInstancing: 1
-  m_ResourceVersion: 1
-  m_PropertySheet:
-    m_Float:
-      m_Array:
-      - m_Value: 8
-        m_Name: Lifetime Maximum
-        m_Overridden: 1
-      - m_Value: 16
-        m_Name: Lifetime Minimum
-        m_Overridden: 1
-      - m_Value: 0.06
-        m_Name: Size Max
-        m_Overridden: 1
-      - m_Value: 0.2
-        m_Name: Size Min
-        m_Overridden: 1
-      - m_Value: 7.49
-        m_Name: Perlin Noise Amplitude
-        m_Overridden: 1
-      - m_Value: 1
-        m_Name: Perlin Noise Lacunarity
-        m_Overridden: 1
-      - m_Value: 1
-        m_Name: Perlin Noise Roughness
-        m_Overridden: 1
-      - m_Value: 8.44
-        m_Name: Perlin Noise Frequency
-        m_Overridden: 1
-      - m_Value: 0.84
-        m_Name: SwirlFalloff
-        m_Overridden: 1
-      - m_Value: 0.1
-        m_Name: SwirlStrength
-        m_Overridden: 1
-      - m_Value: -1
-        m_Name: Thruster Effect on Particles
-        m_Overridden: 0
-      - m_Value: 1
-        m_Name: Perlin Noise Amplitude 1
-        m_Overridden: 1
-      - m_Value: 0.01
-        m_Name: Velocity Color Tint Amount
-        m_Overridden: 1
-      - m_Value: 0.8
-        m_Name: Velocty Color Tint Offset
-        m_Overridden: 1
-      - m_Value: 1
-        m_Name: Attractor Influence Size Area
-        m_Overridden: 1
-      - m_Value: 0
-        m_Name: Minimum Color Fast Multiply
-        m_Overridden: 1
-      - m_Value: 1
-        m_Name: Maximum Color Fast Multiply
-        m_Overridden: 1
-      - m_Value: 2.6
-        m_Name: MaxShipSpeed
-        m_Overridden: 1
-      - m_Value: 0.02
-        m_Name: Adjust Velocity Coloring Lerp Input
-        m_Overridden: 1
-      - m_Value: 2
-        m_Name: SpawnRate 2
-        m_Overridden: 1
-    m_Vector2f:
-      m_Array: []
-    m_Vector3f:
-      m_Array:
-      - m_Value: {x: 0, y: 0, z: 0}
-        m_Name: PlayerVelocity
-        m_Overridden: 1
-      - m_Value: {x: 2, y: 2, z: 2}
-        m_Name: Scale Collision
-        m_Overridden: 1
-    m_Vector4f:
-      m_Array:
-      - m_Value: {x: 294.86908, y: 152.90483, z: 0, w: 1}
-        m_Name: Color_B
-        m_Overridden: 1
-      - m_Value: {x: 40.108208, y: 20.85887, z: 0, w: 1}
-        m_Name: Color_A
-        m_Overridden: 1
-      - m_Value: {x: 4.0472007, y: 0, z: 0.1253036, w: 1}
-        m_Name: Color A
-        m_Overridden: 1
-      - m_Value: {x: 0, y: 0.07935625, z: 0.20754719, w: 1}
-        m_Name: Color B (Fast)
-        m_Overridden: 1
-      - m_Value: {x: 766.9961, y: 58.179478, z: 0, w: 1}
-        m_Name: Color Fast
-        m_Overridden: 1
-    m_Uint:
-      m_Array: []
-    m_Int:
-      m_Array:
-      - m_Value: 1
-        m_Name: SpawnRate
-        m_Overridden: 1
-      - m_Value: 2
-        m_Name: Perlin Noise Octaves
-        m_Overridden: 1
-    m_Matrix4x4f:
-      m_Array: []
-    m_AnimationCurve:
-      m_Array: []
-    m_Gradient:
-      m_Array: []
-    m_NamedObject:
-      m_Array:
-      - m_Value: {fileID: 2800000, guid: 8aafaa78fe944854997fef757ff4ba72, type: 3}
-        m_Name: Texture
-        m_Overridden: 1
-    m_Bool:
-      m_Array: []
 --- !u!1 &318764042
 GameObject:
   m_ObjectHideFlags: 0
@@ -664,236 +460,9 @@ Transform:
   m_Children:
   - {fileID: 318764043}
   - {fileID: 1610956811}
-  - {fileID: 1185725366}
-  - {fileID: 18526379}
+  - {fileID: 1568083004}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1185725365
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1185725366}
-  - component: {fileID: 1185725369}
-  - component: {fileID: 1185725368}
-  - component: {fileID: 1185725370}
-  m_Layer: 0
-  m_Name: VFX_Space_Dust
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1185725366
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1185725365}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 9.808144, y: 0, z: 1.6118793}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1169903124}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!73398921 &1185725368
-VFXRenderer:
-  serializedVersion: 1
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1185725365}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 0
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!2083052967 &1185725369
-VisualEffect:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1185725365}
-  m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: 07a415da5e67ade4b92add50cdb16d07, type: 3}
-  m_InitialEventName: OnPlay
-  m_InitialEventNameOverriden: 0
-  m_StartSeed: 0
-  m_ResetSeedOnPlay: 1
-  m_AllowInstancing: 1
-  m_ResourceVersion: 1
-  m_PropertySheet:
-    m_Float:
-      m_Array:
-      - m_Value: 1
-        m_Name: Lifetime Maximum
-        m_Overridden: 1
-      - m_Value: 8
-        m_Name: Lifetime Minimum
-        m_Overridden: 1
-      - m_Value: 0.2
-        m_Name: Size Max
-        m_Overridden: 1
-      - m_Value: 0.1
-        m_Name: Size Min
-        m_Overridden: 1
-      - m_Value: 12.8
-        m_Name: Perlin Noise Amplitude
-        m_Overridden: 1
-      - m_Value: 1
-        m_Name: Perlin Noise Lacunarity
-        m_Overridden: 1
-      - m_Value: 1
-        m_Name: Perlin Noise Roughness
-        m_Overridden: 1
-      - m_Value: 1.7
-        m_Name: Perlin Noise Frequency
-        m_Overridden: 1
-      - m_Value: 1.07
-        m_Name: SwirlFalloff
-        m_Overridden: 1
-      - m_Value: 1.36
-        m_Name: SwirlStrength
-        m_Overridden: 1
-      - m_Value: -1
-        m_Name: Thruster Effect on Particles
-        m_Overridden: 0
-      - m_Value: 1
-        m_Name: Perlin Noise Amplitude 1
-        m_Overridden: 1
-      - m_Value: 0.01
-        m_Name: Velocity Color Tint Amount
-        m_Overridden: 1
-      - m_Value: 0.21
-        m_Name: Velocty Color Tint Offset
-        m_Overridden: 1
-      - m_Value: 1
-        m_Name: Attractor Influence Size Area
-        m_Overridden: 1
-      - m_Value: 0.03
-        m_Name: Minimum Color Fast Multiply
-        m_Overridden: 1
-      - m_Value: 0.43
-        m_Name: Maximum Color Fast Multiply
-        m_Overridden: 1
-      - m_Value: 7.67
-        m_Name: MaxShipSpeed
-        m_Overridden: 1
-      - m_Value: 0.05
-        m_Name: Adjust Velocity Coloring Lerp Input
-        m_Overridden: 1
-      - m_Value: 2000000
-        m_Name: SpawnRate 2
-        m_Overridden: 1
-      - m_Value: 0.55
-        m_Name: StillDustClumpThreshold
-        m_Overridden: 1
-    m_Vector2f:
-      m_Array: []
-    m_Vector3f:
-      m_Array:
-      - m_Value: {x: 15.39, y: 0, z: 24.69}
-        m_Name: PlayerVelocity
-        m_Overridden: 1
-      - m_Value: {x: 1, y: 1, z: 1}
-        m_Name: Scale Collision
-        m_Overridden: 1
-    m_Vector4f:
-      m_Array:
-      - m_Value: {x: 0, y: 0.003921569, z: 0.003921569, w: 1}
-        m_Name: Color_B
-        m_Overridden: 1
-      - m_Value: {x: 0, y: 0.007843138, z: 0.003921569, w: 1}
-        m_Name: Color_A
-        m_Overridden: 1
-      - m_Value: {x: 4.0472007, y: 0, z: 0.1253036, w: 1}
-        m_Name: Color A
-        m_Overridden: 1
-      - m_Value: {x: 0, y: 0.07935625, z: 0.20754719, w: 1}
-        m_Name: Color B (Fast)
-        m_Overridden: 1
-      - m_Value: {x: 116.80631, y: 61.02763, z: 3.8568144, w: 1}
-        m_Name: Color Fast
-        m_Overridden: 1
-    m_Uint:
-      m_Array: []
-    m_Int:
-      m_Array:
-      - m_Value: 1
-        m_Name: SpawnRate
-        m_Overridden: 1
-      - m_Value: 5
-        m_Name: Perlin Noise Octaves
-        m_Overridden: 1
-      - m_Value: 6
-        m_Name: InfluencerCount
-        m_Overridden: 1
-    m_Matrix4x4f:
-      m_Array: []
-    m_AnimationCurve:
-      m_Array: []
-    m_Gradient:
-      m_Array: []
-    m_NamedObject:
-      m_Array:
-      - m_Value: {fileID: 2800000, guid: 8aafaa78fe944854997fef757ff4ba72, type: 3}
-        m_Name: Texture
-        m_Overridden: 1
-    m_Bool:
-      m_Array: []
---- !u!114 &1185725370
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1185725365}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92f9775590ef95d43aaeffb108b51e1b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  followRadius: 250
-  maxInfluencers: 256
-  playerLayerName: PlayerShips
 --- !u!1 &1327324729
 GameObject:
   m_ObjectHideFlags: 0
@@ -1065,6 +634,94 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1568083003
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1568083004}
+  - component: {fileID: 1568083005}
+  m_Layer: 0
+  m_Name: Prefab_VFX_GPUParticle_SpaceDust
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1568083004
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1568083003}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 190, y: 0, z: 214}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1169903124}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1568083005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1568083003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07e092726e4885a43b3cb323c9c9e4d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxParticles: 2000000
+  lifeMin: 10
+  lifeMax: 20
+  sizeMin: 0.6
+  sizeMax: 1
+  boxSize: {x: 1000, y: 1, z: 1000}
+  spawnPerSecond: 200000
+  liveForever: 1
+  constantAcceleration: {x: 0, y: 0, z: 0}
+  drag: 0.98
+  billboardMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  renderMaterial: {fileID: 2100000, guid: 1902459194af94e4d835b432f47e577c, type: 2}
+  colourBySpeed: 1
+  speedGradient:
+    serializedVersion: 2
+    key0: {r: 0.03529412, g: 0.04361171, b: 0.07450981, a: 1}
+    key1: {r: 0.07058822, g: 0.07707498, b: 0.30980393, a: 1}
+    key2: {r: 0.039215695, g: 0.29691058, b: 0.62352943, a: 0}
+    key3: {r: 0, g: 0.52542996, b: 1, a: 0}
+    key4: {r: 0.07843137, g: 1, b: 0.972931, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 578
+    ctime1: 5975
+    ctime2: 12914
+    ctime3: 21588
+    ctime4: 34695
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 5
+    m_NumAlphaKeys: 2
+  particleCompute: {fileID: 7200000, guid: fae452ce4077e6a4f92aab362ea0e56b, type: 3}
 --- !u!1 &1606383117
 GameObject:
   m_ObjectHideFlags: 0

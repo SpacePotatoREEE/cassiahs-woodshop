@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 2572327188641000590}
   - component: {fileID: 4540707722772252912}
   - component: {fileID: 731123439036524596}
-  - component: {fileID: 5088631345590171673}
+  - component: {fileID: 340618739494530737}
   m_Layer: 7
   m_Name: Player_SPACE_MASTER
   m_TagString: Player
@@ -307,7 +307,7 @@ MonoBehaviour:
   arrivalOffset: 100
   jumpEnergyCost: 10
   movementScript: {fileID: 727887392667572011}
---- !u!114 &5088631345590171673
+--- !u!114 &340618739494530737
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -316,9 +316,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1667069528744625763}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9b96bce5b8e31d49847002646307598, type: 3}
+  m_Script: {fileID: 11500000, guid: 21a9a90b5852a2849ac0938c1004ab54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  radius: 3
+  forceStrength: 100
+  attenuation:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0.6485901
+      inSlope: -1
+      outSlope: -1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2274380859335425377
 GameObject:
   m_ObjectHideFlags: 0

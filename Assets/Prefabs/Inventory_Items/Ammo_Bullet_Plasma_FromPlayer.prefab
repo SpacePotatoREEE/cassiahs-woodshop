@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 687657139815255175}
   - component: {fileID: 3883229118437796934}
   - component: {fileID: 4614102537869901891}
-  - component: {fileID: 1861916909198948990}
+  - component: {fileID: -1913824184983669393}
   m_Layer: 8
   m_Name: Ammo_Bullet_Plasma_FromPlayer
   m_TagString: Untagged
@@ -230,7 +230,7 @@ MonoBehaviour:
   allowedLayers:
     serializedVersion: 2
     m_Bits: 64
---- !u!114 &1861916909198948990
+--- !u!114 &-1913824184983669393
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -239,7 +239,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 8558436746612208066}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9b96bce5b8e31d49847002646307598, type: 3}
+  m_Script: {fileID: 11500000, guid: 21a9a90b5852a2849ac0938c1004ab54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  computeVelocityFromTransform: 0
+  radius: 2
+  forceStrength: 600
+  attenuation:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: -1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

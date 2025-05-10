@@ -1,0 +1,90 @@
+#pragma kernel Simulate
+#include "UnityCG.cginc"
+
+// ─── PCG hash helpers ───
+float hash11(uint x){
+    x^=2747636419u; x*=2654435769u;
+    x^=x>>16;       x*=2654435769u;
+    x^=x>>16;       x*=2654435769u;
+    return frac(x*1.0e-10);
+}
+float3 hash31(uint idx,uint seed){
+    return float3(hash11(idx^seed),
+                  hash11(idx*747796405u^seed),
+                  hash11(idx*2891336453u^seed));
+}
+
+// ─── layout ───
+struct Particle{float3 pos;float3 vel;float life;float size;};
+
+// ─── buffers ───
+RWStructuredBuffer<Particle> _Particles;
+RWStructuredBuffer<uint>     indirectArgs;
+StructuredBuffer<float4>     _Volumes;   // xyz pos, w radius
+StructuredBuffer<float4>     _Forces;    // xyz force
+
+// ─── uniforms ───
+uint   _VolumeCount;
+float3 _Accel;
+float  _Drag;
+float  _DeltaTime;
+int    _SpawnCount;
+float3 _BoxCenter;
+float3 _BoxExtents;
+uint   _MaxParticles;
+uint   _FrameSeed;
+uint   _SpawnOffset;
+float  _LifeMin, _LifeMax;
+float  _SizeMin, _SizeMax;
+int    _LiveForever;
+
+// ─── kernel ───
+[numthreads(256,1,1)]
+void Simulate(uint3 id:SV_DispatchThreadID)
+{
+    uint index = id.x;
+    if(index >= _MaxParticles) return;
+
+    uint trueIdx = (index + _SpawnOffset) % _MaxParticles;
+
+    Particle p = _Particles[index];
+
+    // ── respawn ──
+    if(p.life <= 0.0 && trueIdx < (uint)_SpawnCount)
+    {
+        float3 rnd = hash31(trueIdx, _FrameSeed);
+
+        p.pos  = _BoxCenter + (rnd - 0.5) * 2.0 * _BoxExtents;
+        p.vel  = (rnd - 0.5) * 0.4;
+        p.life = _LiveForever ? 1e9 : lerp(_LifeMin, _LifeMax, rnd.x);
+        p.size = lerp(_SizeMin,  _SizeMax, rnd.y);
+    }
+
+    // ── physics ──
+    if(p.life > 0.0)
+    {
+        [loop] for(uint v=0; v<_VolumeCount; ++v)
+        {
+            float3 vPos   = _Volumes[v].xyz;
+            float  vRad   = _Volumes[v].w;
+            float3 vForce = _Forces [v].xyz;
+
+            float3 d    = p.pos - vPos;
+            float  dist = length(d);
+            if(dist < vRad)
+            {
+                float atten = saturate(1.0 - dist / vRad);
+                p.vel += normalize(d) * vForce * atten * _DeltaTime;
+            }
+        }
+
+        p.vel += _Accel * _DeltaTime;
+        p.vel *= pow(_Drag, _DeltaTime * 60.0);
+        p.pos += p.vel * _DeltaTime;
+        if(_LiveForever == 0) p.life -= _DeltaTime;
+    }
+
+    _Particles[index] = p;
+
+    if(id.x == 0) indirectArgs[1] = _MaxParticles;
+}

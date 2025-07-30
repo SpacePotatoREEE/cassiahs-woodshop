@@ -681,8 +681,8 @@ MonoBehaviour:
   maxParticles: 2000000
   lifeMin: 10
   lifeMax: 20
-  sizeMin: 0.6
-  sizeMax: 1
+  sizeMin: 0.1
+  sizeMax: 0.3
   boxSize: {x: 1000, y: 1, z: 1000}
   spawnPerSecond: 200000
   liveForever: 1

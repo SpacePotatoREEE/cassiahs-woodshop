@@ -74,7 +74,8 @@ void Simulate(uint3 id:SV_DispatchThreadID)
             if(dist < vRad)
             {
                 float atten = saturate(1.0 - dist / vRad);
-                p.vel += normalize(d) * vForce * atten * _DeltaTime;
+                float  strength = length(vForce); 
+                p.vel += normalize(d) * strength * atten * _DeltaTime; // ★ isotropic force / uniform around object
             }
         }
 

@@ -170,7 +170,7 @@ Material:
     - _Metallic_Tile_Offset: {r: 1, g: 1, b: 0, a: 0}
     - _NormalFlip: {r: -1, g: -1, b: -1, a: 0}
     - _Normal_Tile_Offset: {r: 39.2, g: 1, b: 0, a: 0}
-    - _PlayerPos: {r: -19.78725, g: 0, b: 16.65595, a: 0}
+    - _PlayerPos: {r: -22.001982, g: 0, b: 76.44118, a: 0}
     - _Smoothness_Tiles_Offset: {r: 1, g: 1, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Texture_Tint: {r: 1, g: 1, b: 1, a: 0}

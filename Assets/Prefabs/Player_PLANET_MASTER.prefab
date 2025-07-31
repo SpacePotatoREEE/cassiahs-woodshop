@@ -75,6 +75,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b9adc0fd543ed94b82bf2869b2d4acf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 9105962366496102051}
   moveSpeed: 5
   bendMaterials: {fileID: 11400000, guid: 5915427417ae21845a7e204b5c24a7c2, type: 2}
   playerTransform: {fileID: 6378570094967568976}
@@ -188,5 +189,10 @@ PrefabInstance:
 --- !u!4 &2936008661336493273 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 97dc3b1a3272b544ea571e831edc73d8, type: 3}
+  m_PrefabInstance: {fileID: 3401472463745575730}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &9105962366496102051 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 97dc3b1a3272b544ea571e831edc73d8, type: 3}
   m_PrefabInstance: {fileID: 3401472463745575730}
   m_PrefabAsset: {fileID: 0}

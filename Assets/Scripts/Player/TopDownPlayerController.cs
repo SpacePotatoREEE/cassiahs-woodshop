@@ -4,6 +4,8 @@ using UnityEngine;
 public class TopDownPlayerController : MonoBehaviour
 {
     /* ─────────────  Inspector  ───────────── */
+    [SerializeField] private Animator animator;
+    
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
 
@@ -39,6 +41,9 @@ public class TopDownPlayerController : MonoBehaviour
 
         if (move.sqrMagnitude > 1e-3f)            // turn to face motion direction
             rb.MoveRotation(Quaternion.LookRotation(move, Vector3.up));
+        
+        float speedPercent = move.magnitude; // range from 0 to 1
+        animator.SetFloat("Speed", speedPercent);
     }
 
     private void Update()

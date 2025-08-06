@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 298cf3e57d238d1488548f334634100e, type: 3}
+  m_Name: Wolf_Template
+  m_EditorClassIdentifier: 
+  UnitName: WOLF
+  Prefab: {fileID: 6401272275119518137, guid: 3d02907fe1d2fce4db48d2dcf28b5515, type: 3}
+  BiomeTag: Earth
+  GroundSpawnOffset: 0.5
+  BaseStats:
+  - Stat: 0
+    Flat: 100
+    Percent: 100
+  - Stat: 1
+    Flat: 10
+    Percent: 100
+  - Stat: 2
+    Flat: 5
+    Percent: 100
+  - Stat: 3
+    Flat: 5
+    Percent: 100
+  - Stat: 4
+    Flat: 10
+    Percent: 100
+  - Stat: 5
+    Flat: 100
+    Percent: 100
+  - Stat: 6
+    Flat: 1
+    Percent: 100
+  evolutionDef: {fileID: 0}
+  evolutionTier: 0

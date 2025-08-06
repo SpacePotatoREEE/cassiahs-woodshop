@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 177dab01c1e88d047bfc77b58545d3e7, type: 3}
+  m_Name: SpawnTable_Forest_Lv1
+  m_EditorClassIdentifier: 
+  MinAreaLevel: 1
+  MaxAreaLevel: 3
+  Units:
+  - Template: {fileID: 11400000, guid: 54aa71851b9faba478c6d1f46704db61, type: 2}
+    Weight: 100
+  MinAffixes: 0
+  MaxAffixes: 2

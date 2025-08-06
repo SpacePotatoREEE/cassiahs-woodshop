@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f15bef067e72c68479adbe27c69729fc, type: 3}
+  m_Name: Affix_Suffix_Laziness
+  m_EditorClassIdentifier: 
+  AffixName: Laziness
+  IsPrefix: 0
+  MinAreaLevel: 1
+  MaxAreaLevel: 99
+  AllowedBiomes:
+  - Earth
+  DisplayColor: {r: 0.21813813, g: 0.8113208, b: 0.28843424, a: 1}
+  ExclusiveGroup: 
+  Modifiers:
+  - Stat: 4
+    Flat: 99
+    Percent: 0
+  Weight: 10

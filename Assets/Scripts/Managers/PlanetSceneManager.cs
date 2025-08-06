@@ -1,60 +1,73 @@
+// PlanetSceneManager.cs
+//
+// Combines previous planet‑scene logic with the new spawn‑pipeline bootstrap.
+// ‑‑ Version: 2025‑08‑06
+//
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;          // <─ new
+using UnityEngine.UI;
 
-/// <summary>
-/// Handles planet-scene logic: auto-heals player on arrival, shows the
-/// “Leave Planet” UI and loads the associated space scene when the button
-/// is clicked.  
-/// The script now:
-/// • Auto-wires the first Button it finds under <c>leavePanel</c>  
-/// • Logs helpful errors if the scene name is missing or not in Build Settings  
-/// • Optionally saves the game before the scene switch
-/// </summary>
+[DisallowMultipleComponent]
 public class PlanetSceneManager : MonoBehaviour
 {
     /* ───────────────  INSPECTOR  ─────────────── */
 
-    [Header("Space Scene To Load When Leaving")]
-    [Tooltip("Name of the space scene that should be loaded when the player clicks ‘Leave’. " +
-             "This scene must be added to File ▶ Build Settings.")]
+    [Header("► Space Scene To Load When Leaving")]
+    [Tooltip("Name of the space scene that should be loaded when the player clicks ‘Leave’. "
+           + "This scene must be added to File ▶ Build Settings.")]
     [SerializeField] private string spaceSceneName = "Space_A";
 
-    [Header("Leave-Button Panel (optional)")]
-    [Tooltip("Root GameObject that contains the Leave button. " +
-             "If left unassigned the panel will not be toggled.")]
+    [Header("► Leave‑Button Panel (optional)")]
+    [Tooltip("Root GameObject that contains the Leave button. "
+           + "If left unassigned the panel will not be toggled.")]
     [SerializeField] private GameObject leavePanel = null;
 
-    [Header("Landing Heal")]
-    [Tooltip("Percentage of max-health restored the instant the player lands (0–1).")]
+    [Header("► Landing Heal")]
+    [Tooltip("Percentage of max‑health restored the instant the player lands (0–1).")]
     [Range(0f, 1f)] [SerializeField] private float percentHeal = 1f;
+
+    [Header("► Player Bootstrap")]
+    [Tooltip("Prefab that represents the player on foot (Top‑Down controller). "
+           + "Only spawned if one is not already in the scene.")]
+    [SerializeField] private GameObject playerPrefab = null;
+
+    [Tooltip("Tag that marks the desired spawn Transform in the scene.")]
+    [SerializeField] private string playerSpawnTag = "PlayerSpawn";
+
+    [Header("► (Optional) Spawn Volumes")]
+    [Tooltip("If you want to make sure certain AreaSpawnManagers are enabled at runtime, "
+           + "list them here; otherwise they will self‑register when the player enters.")]
+    [SerializeField] private AreaSpawnManager[] spawnVolumes = { };
 
     /* ───────────────  LIFECYCLE  ─────────────── */
 
     private void Awake()
     {
-        // Basic validation so mistakes are caught immediately.
+        // Scene‑name sanity check
         if (string.IsNullOrEmpty(spaceSceneName))
-            Debug.LogError("[PlanetSceneManager] ‘spaceSceneName’ is empty – " +
-                           "set it in the Inspector.", this);
+            Debug.LogError("[PlanetSceneManager] ‘spaceSceneName’ is empty – set it in the Inspector.", this);
         else if (!Application.CanStreamedLevelBeLoaded(spaceSceneName))
-            Debug.LogError($"[PlanetSceneManager] The scene “{spaceSceneName}” is NOT in " +
-                           "Build Settings – add it or fix the name.", this);
+            Debug.LogError($"[PlanetSceneManager] The scene “{spaceSceneName}” is NOT in Build Settings – add it or fix the name.", this);
+
+        // Make sure we have a player
+        EnsurePlayerPresence();
     }
 
     private void Start()
     {
         HealPlayerOnLanding();
-        ShowLeavePanel();          // make sure the UI is visible
-        AutoWireLeaveButton();     // makes the button work even if you forget to hook it up
+        ShowLeavePanel();
+        AutoWireLeaveButton();
+        InitialiseSpawnVolumes();
+        RestoreSceneState();               // hook for your SaveSystem (optional)
     }
 
-    /* ───────────────  PUBLIC API  ─────────────── */
+    /* ───────────────  PUBLIC UI CALLBACK  ─────────────── */
 
     /// <summary>Called by the Leave button. Switches back to the space scene.</summary>
     public void OnLeavePlanetClicked()
     {
-        // Optional autosave – uncomment if you like.
+        // Example autosave – uncomment if desired.
         // GameManager.Instance?.SaveGame();
 
         if (string.IsNullOrEmpty(spaceSceneName)) return;
@@ -63,7 +76,31 @@ public class PlanetSceneManager : MonoBehaviour
         SceneManager.LoadScene(spaceSceneName);
     }
 
-    /* ───────────────  INTERNAL  ─────────────── */
+    /* ───────────────  INTERNAL HELPERS  ─────────────── */
+
+    private void EnsurePlayerPresence()
+    {
+        if (FindObjectOfType<TopDownPlayerController>() != null) return;   // already here
+
+        if (!playerPrefab)
+        {
+            Debug.LogWarning("[PlanetSceneManager] No playerPrefab assigned – cannot spawn player!", this);
+            return;
+        }
+
+        // Spawn position
+        Vector3 pos = Vector3.zero;
+        Quaternion rot = Quaternion.identity;
+
+        GameObject marker = GameObject.FindWithTag(playerSpawnTag);
+        if (marker)
+        {
+            pos = marker.transform.position;
+            rot = marker.transform.rotation;
+        }
+
+        Instantiate(playerPrefab, pos, rot);
+    }
 
     private void HealPlayerOnLanding()
     {
@@ -77,8 +114,7 @@ public class PlanetSceneManager : MonoBehaviour
         stats.currentHealth = Mathf.Min(stats.currentHealth + healAmount, stats.maxHealth);
         stats.SyncHealthBar();
 
-        Debug.Log($"[PlanetSceneManager] Healed player by {healAmount} → " +
-                  $"{stats.currentHealth}/{stats.maxHealth}");
+        Debug.Log($"[PlanetSceneManager] Healed player by {healAmount} → {stats.currentHealth}/{stats.maxHealth}");
     }
 
     private void ShowLeavePanel()
@@ -86,11 +122,7 @@ public class PlanetSceneManager : MonoBehaviour
         if (leavePanel) leavePanel.SetActive(true);
     }
 
-    /// <summary>
-    /// Finds a <see cref="Button"/> under <c>leavePanel</c> (first one encountered)
-    /// and registers <see cref="OnLeavePlanetClicked"/>.  This means you never have
-    /// to wire the button manually in future planet scenes.
-    /// </summary>
+    /// <summary>Automatically hooks the first Button found under <c>leavePanel</c>.</summary>
     private void AutoWireLeaveButton()
     {
         if (!leavePanel) return;
@@ -102,8 +134,27 @@ public class PlanetSceneManager : MonoBehaviour
             return;
         }
 
-        // Remove any duplicate listeners (safe even if none exist)
-        btn.onClick.RemoveListener(OnLeavePlanetClicked);
+        btn.onClick.RemoveListener(OnLeavePlanetClicked); // avoid duplicates
         btn.onClick.AddListener(OnLeavePlanetClicked);
+    }
+
+    private void InitialiseSpawnVolumes()
+    {
+        foreach (var v in spawnVolumes)
+            if (v) v.enabled = true;
+    }
+
+    /// <summary>
+    /// Placeholder for whatever save‑state restoration your project already performs
+    /// (time‑of‑day, music cues, quest flags, etc.).
+    /// </summary>
+    private void RestoreSceneState()
+    {
+        // Example sketch:
+        // if (SaveSystem.TryGetPlanetState(SceneManager.GetActiveScene().name, out PlanetSaveData st))
+        // {
+        //     DayNightCycle.Instance.SetTimeOfDay(st.timeOfDay);
+        //     BackgroundMusicManager.Instance.Play(st.musicCue);
+        // }
     }
 }

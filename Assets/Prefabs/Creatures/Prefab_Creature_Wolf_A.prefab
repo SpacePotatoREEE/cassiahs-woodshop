@@ -43,7 +43,8 @@ GameObject:
   - component: {fileID: 1490098921265179565}
   - component: {fileID: 7858401621703552016}
   - component: {fileID: 5764758192688642534}
-  - component: {fileID: 1952640965254532355}
+  - component: {fileID: 6740237519559678430}
+  - component: {fileID: 2584978046196219081}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -135,7 +136,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: WOLF
+  m_text: ' fdfds'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -209,7 +210,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 7858401621703552016}
   m_maskType: 0
---- !u!114 &1952640965254532355
+--- !u!114 &6740237519559678430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2996800846688807395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2ee7bd77060dfc4ab87de474a4b110f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2584978046196219081
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -221,6 +234,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec6883980c556014e81ac7fc45a964fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scaleCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &6401272275119518137
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,6 +253,7 @@ GameObject:
   - component: {fileID: 7418874374174232881}
   - component: {fileID: 5629548142342217766}
   - component: {fileID: 8494947619476257623}
+  - component: {fileID: 4795394516702923734}
   m_Layer: 0
   m_Name: Prefab_Creature_Wolf_A
   m_TagString: Untagged
@@ -325,11 +345,11 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &8494947619476257623
 MonoBehaviour:
@@ -365,3 +385,18 @@ MonoBehaviour:
   - Type: 6
     Base: 106
     Current: 0
+--- !u!114 &4795394516702923734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6401272275119518137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebde742c30caf0e45a8b779437991120, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  triggerRadius: 1
+  context: {fileID: 11400000, guid: 55848f5ad98bc874fba07a881812a835, type: 2}
+  battleSceneName: Battle_Template

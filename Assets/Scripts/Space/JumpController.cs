@@ -1,39 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody))]
 public class JumpController : MonoBehaviour
 {
-    /* ───── Parameters ───── */
     [Header("Brake Phase")]
     [SerializeField] private float brakeTargetSpeed = 5f;
     [SerializeField] private float brakeDuration    = 2f;
 
     [Header("Spool-Up Phase")]
-    [SerializeField] private float spoolUpTime  = 1f;   // ← we’ll drain energy over this time
-    [SerializeField] private float launchSpeed = 120f;
+    [SerializeField] private float spoolUpTime  = 1f;
+    [SerializeField] private float launchSpeed  = 120f;
 
     [Header("Arrival")]
     [SerializeField] private float arrivalOffset = 100f;
 
     [Header("Energy")]
-    [Tooltip("Energy cost per hyperspace jump.")]
     [SerializeField] private float jumpEnergyCost = 10f;
 
     [Header("References")]
     [SerializeField] private MonoBehaviour movementScript; // ShipDriftController
 
-    /* ───── Internals ───── */
     private Rigidbody rb;
-    private bool      jumping;
+    private bool jumping;
     private Queue<StarSystemData> route = new();
     private GalaxyMapController   map;
-    private Vector3   approachDir;
+    private Vector3 approachDir;
     private PlayerStats stats;
 
-    /* ═════════════  LIFECYCLE  ═════════════ */
     private void Awake()
     {
         rb    = GetComponent<Rigidbody>();
@@ -48,17 +43,15 @@ public class JumpController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.J))
         {
-            // Enough energy to start?
             if (stats != null && !stats.HasEnoughEnergy(jumpEnergyCost))
             {
-                Debug.LogWarning("[JumpController] Not enough energy for hyperspace jump!");
+                Debug.LogWarning("[JumpController] Not enough energy for jump!");
                 return;
             }
             StartCoroutine(JumpSequence());
         }
     }
 
-    /* ═════════════  ROUTE CACHE  ═════════════ */
     private bool RefreshRoute()
     {
         if (!map) map = FindObjectOfType<GalaxyMapController>(true);
@@ -75,7 +68,6 @@ public class JumpController : MonoBehaviour
         return true;
     }
 
-    /* ═════════════  MAIN SEQUENCE  ═════════════ */
     private IEnumerator JumpSequence()
     {
         jumping = true;
@@ -84,7 +76,7 @@ public class JumpController : MonoBehaviour
         StarSystemData nextSys = route.Peek();
         approachDir = ComputeJumpDirection(nextSys).normalized;
 
-        /* 1) BRAKE & ROTATE (unchanged) */
+        // 1) Brake & rotate
         Quaternion targetRot = Quaternion.LookRotation(approachDir, Vector3.up);
         Vector3    startVel  = rb.linearVelocity;
         float      t         = 0f;
@@ -101,7 +93,7 @@ public class JumpController : MonoBehaviour
         }
         rb.linearVelocity = -transform.forward * brakeTargetSpeed;
 
-        /* 2) SPOOL-UP -- drain energy gradually */
+        // 2) Spool up & drain energy
         float energyStart  = stats.CurrentEnergy;
         float energyTarget = energyStart - jumpEnergyCost;
         t = 0f;
@@ -111,55 +103,45 @@ public class JumpController : MonoBehaviour
             t += Time.deltaTime;
             float frac = Mathf.Clamp01(t / spoolUpTime);
 
-            // lerp ship speed
             float spd = Mathf.Lerp(brakeTargetSpeed, launchSpeed, frac);
             rb.linearVelocity = -transform.forward * spd;
 
-            // lerp energy
             stats.CurrentEnergy = Mathf.Lerp(energyStart, energyTarget, frac);
-
             yield return null;
         }
-        // ensure exact final value
         stats.CurrentEnergy = energyTarget;
 
-        /* 3) LOAD TARGET SCENE */
+        // 3) Switch scenes additively through GameManager (keep Main)
         if (string.IsNullOrWhiteSpace(nextSys.sceneName))
         {
-            Debug.LogError($"StarSystem '{nextSys.displayName}' has empty sceneName.");
+            Debug.LogError($"[JumpController] Next system '{nextSys?.displayName}' has no sceneName.");
             Restore(); yield break;
         }
 
-        DontDestroyOnLoad(gameObject);
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        SceneManager.LoadScene(nextSys.sceneName);
+        DontDestroyOnLoad(gameObject);             // keep ship while switching
+        GameManager.Instance?.SwitchToWorldScene(nextSys.sceneName);
+
+        // Finish arrival after one frame (scene will be active now)
+        StartCoroutine(FinishArrivalNextFrame());
     }
 
-    /* ═════════════  ARRIVAL  ═════════════ */
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private IEnumerator FinishArrivalNextFrame()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        yield return null;
 
         Vector3 dir = new Vector3(approachDir.x, 0f, approachDir.z).normalized;
         if (dir.sqrMagnitude < 0.001f) dir = transform.forward;
 
-        // 1) position
-        rb.position = dir * arrivalOffset;
-
-        // 2) rotate 180° so bow faces planet
+        rb.position      = dir * arrivalOffset;
         transform.rotation = Quaternion.LookRotation(-dir, Vector3.up);
+        rb.linearVelocity  = transform.forward * launchSpeed;
 
-        // 3) keep velocity toward planet
-        rb.linearVelocity = transform.forward * launchSpeed;
-
-        // 4) route bookkeeping
         if (route.Count > 0) route.Dequeue();
         map?.RemoveFirstHopFromActiveRoute();
 
         Restore();
     }
 
-    /* ═════════════  HELPERS  ═════════════ */
     private Vector3 ComputeJumpDirection(StarSystemData next)
     {
         StarSystemData cur = GameManager.Instance?.CurrentSystem;

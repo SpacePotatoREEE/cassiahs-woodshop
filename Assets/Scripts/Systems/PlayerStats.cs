@@ -4,12 +4,16 @@ using System;                          // for Environment.StackTrace
 using System.Collections;
 
 /// <summary>
-/// Persistent stats for the space-ship player.
+/// Persistent stats for the space-ship player (PlayerShip layer).
+/// Singleton + DontDestroyOnLoad to ensure exactly one ship exists.
 /// Keeps Health and Energy in sync with the HUD.
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerStats : MonoBehaviour
 {
+    /* ───────────────  SINGLETON  ─────────────── */
+    public static PlayerStats Instance { get; private set; }
+
     /* ───────────────  HEALTH  ─────────────── */
     [Header("Player Health")]
     public float maxHealth = 100f;
@@ -28,7 +32,6 @@ public class PlayerStats : MonoBehaviour
         set
         {
             if (Mathf.Approximately(_currentEnergy, value)) return;   // no change
-
             Debug.Log($"[Energy SET] {_currentEnergy} → {value}\n{Environment.StackTrace}");
             _currentEnergy = value;
 
@@ -62,9 +65,17 @@ public class PlayerStats : MonoBehaviour
     private Rigidbody rb;
 
     /* ═════════════  LIFECYCLE  ═════════════ */
-
     private void Awake()
     {
+        // Enforce a single ship instance for the whole app.
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning($"[PlayerStats] Duplicate ship detected ({name}). Destroying this instance.");
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+
         Debug.Log($"PlayerStats Awake on {gameObject.name}, instanceID {GetInstanceID()}");
 
         rb = GetComponent<Rigidbody>();
@@ -111,12 +122,9 @@ public class PlayerStats : MonoBehaviour
     public bool ConsumeEnergy(float amount)
     {
         Debug.Log($"[ConsumeEnergy] Before: {CurrentEnergy}  need:{amount}  on {GetInstanceID()}");
-        
         if (CurrentEnergy < amount) return false;
         CurrentEnergy -= amount;          // property will update the bar
-        
         Debug.Log($"[ConsumeEnergy]  After: {CurrentEnergy}");
-        
         return true;
     }
 

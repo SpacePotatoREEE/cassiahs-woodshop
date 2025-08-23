@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Unity.Cinemachine;
 
@@ -11,83 +13,70 @@ public class CharacterSceneManager : MonoBehaviour
     [Tooltip("Drag the Cinemachine Virtual Camera for this scene here.")]
     [SerializeField] private CinemachineCamera virtualCamera;
 
-    // Private references
-    private GameObject spaceCharacterRoot;
-    private GameObject humanCharacterRoot;
+    private const string LAYER_SHIP  = "PlayerShip";
+    private const string LAYER_HUMAN = "PlayerHuman";
 
     private void Start()
     {
-        // 1) Find the top-level parent for each character based on their layer
-        spaceCharacterRoot = FindObjectRootOnLayer("PlayerShip");
-        humanCharacterRoot = FindObjectRootOnLayer("PlayerHuman");
-
         ToggleCharacters();
     }
 
     private void ToggleCharacters()
     {
+        int shipLayer  = LayerMask.NameToLayer(LAYER_SHIP);
+        int humanLayer = LayerMask.NameToLayer(LAYER_HUMAN);
+
+        if (shipLayer < 0 || humanLayer < 0)
+        {
+            Debug.LogWarning("[CharacterSceneManager] Missing layers PlayerShip/PlayerHuman in Project Settings > Tags and Layers.");
+            return;
+        }
+
+        // Collect all unique roots on each layer (across all scenes, incl. DontDestroyOnLoad)
+        var shipRoots  = RootsOnLayer(shipLayer).ToList();
+        var humanRoots = RootsOnLayer(humanLayer).ToList();
+
+        // Decide the ONE root we want active
+        GameObject activeRoot = null;
+
         if (useSpaceCharacter)
         {
-            // ENABLE the space ship
-            if (spaceCharacterRoot != null)
-            {
-                spaceCharacterRoot.SetActive(true);
-
-                // Assign Cinemachine camera to follow this
-                if (virtualCamera != null)
-                {
-                    virtualCamera.Follow = spaceCharacterRoot.transform;
-                    virtualCamera.LookAt = spaceCharacterRoot.transform;
-                }
-            }
-            // DISABLE the human
-            if (humanCharacterRoot != null)
-                humanCharacterRoot.SetActive(false);
+            // Prefer the singleton if present, else first found
+            activeRoot = PlayerStats.Instance ? PlayerStats.Instance.gameObject
+                                              : shipRoots.FirstOrDefault();
+            // Enable the chosen ship, disable all other ships + all humans
+            SetActiveOnly(activeRoot, shipRoots);
+            SetActiveOnly(null, humanRoots);
         }
         else
         {
-            // ENABLE the human
-            if (humanCharacterRoot != null)
-            {
-                humanCharacterRoot.SetActive(true);
+            activeRoot = PlayerStatsHuman.Instance ? PlayerStatsHuman.Instance.gameObject
+                                                   : humanRoots.FirstOrDefault();
+            // Enable the chosen human, disable all other humans + all ships
+            SetActiveOnly(activeRoot, humanRoots);
+            SetActiveOnly(null, shipRoots);
+        }
 
-                // Assign Cinemachine camera
-                if (virtualCamera != null)
-                {
-                    virtualCamera.Follow = humanCharacterRoot.transform;
-                    virtualCamera.LookAt = humanCharacterRoot.transform;
-                }
-            }
-            // DISABLE the space ship
-            if (spaceCharacterRoot != null)
-                spaceCharacterRoot.SetActive(false);
+        // Wire the vcam
+        if (virtualCamera != null && activeRoot != null)
+        {
+            virtualCamera.Follow = activeRoot.transform;
+            virtualCamera.LookAt = activeRoot.transform;
         }
     }
 
-    /// <summary>
-    /// Finds the first GameObject in the scene on the given layer,
-    /// then returns its root (top-level parent).
-    /// </summary>
-    private GameObject FindObjectRootOnLayer(string layerName)
+    private IEnumerable<GameObject> RootsOnLayer(int layerIndex)
     {
-        int layerIndex = LayerMask.NameToLayer(layerName);
-        if (layerIndex < 0)
+        foreach (var go in FindObjectsOfType<GameObject>(true))
         {
-            Debug.LogWarning($"Layer '{layerName}' not found in Project Settings > Tags and Layers.");
-            return null;
+            if (go.layer == layerIndex && go.transform.root == go.transform)
+                yield return go;
         }
+    }
 
-        GameObject[] allObjects = FindObjectsOfType<GameObject>(true); // include inactive
-        foreach (var obj in allObjects)
-        {
-            if (obj.layer == layerIndex)
-            {
-                // Return the topmost parent in the hierarchy
-                return obj.transform.root.gameObject;
-            }
-        }
-
-        Debug.LogWarning($"No object found on layer '{layerName}'.");
-        return null;
+    private void SetActiveOnly(GameObject toEnable, IEnumerable<GameObject> candidates)
+    {
+        foreach (var go in candidates)
+            go.SetActive(go == toEnable && toEnable != null);
     }
 }

@@ -19,8 +19,8 @@ TagManager:
   - PlayerHuman
   - EnemyBoardingTrigger
   - Minimap
-  - 
-  - 
+  - Terrain
+  - ReceiveDecals
   - 
   - 
   - 

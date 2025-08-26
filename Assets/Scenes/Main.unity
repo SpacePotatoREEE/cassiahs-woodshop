@@ -1562,8 +1562,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1905068334}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.30769137, y: 0.012594789, z: 0.005642187, w: 0.95138615}
-  m_LocalPosition: {x: -47.461838, y: 58.79196, z: -50.56199}
+  m_LocalRotation: {x: 0.063555524, y: 0.8423766, z: -0.10191163, w: 0.52533454}
+  m_LocalPosition: {x: -49.56301, y: 57.978745, z: -46.891743}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1691,15 +1691,15 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.01
-  far clip plane: 1000
-  field of view: 60.000004
+  near clip plane: 0.1
+  far clip plane: 5000
+  field of view: 40
   orthographic: 0
-  orthographic size: 31.8
+  orthographic size: 10
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4087
+    m_Bits: 12279
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1929,13 +1929,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7edc955b10f3b1d4e8ac1a02feac5c17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistentMainSceneName: Main
   galaxyDatabase: {fileID: 11400000, guid: b10eaaf485b0f544999303172b27e220, type: 2}
-  player: {fileID: 0}
   creditsText: {fileID: 698207985}
   saveNotificationPanel: {fileID: 1657260409}
   saveNotificationText: {fileID: 1116518480}
   notificationDuration: 2
-  mainSceneNameOverride: 
+  player: {fileID: 0}
 --- !u!4 &2147092750
 Transform:
   m_ObjectHideFlags: 0
@@ -2150,8 +2150,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8280711440852076402}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.30769137, y: 0.012594789, z: 0.005642187, w: 0.95138615}
-  m_LocalPosition: {x: 114.58383, y: 48.218018, z: -0.87926865}
+  m_LocalRotation: {x: 0.063555524, y: 0.8423766, z: -0.10191163, w: 0.52533454}
+  m_LocalPosition: {x: 113.70834, y: 47.879196, z: 0.6500006}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2258,11 +2258,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.01
-  far clip plane: 1000
-  field of view: 60.000004
+  near clip plane: 0.1
+  far clip plane: 5000
+  field of view: 40
   orthographic: 1
-  orthographic size: 31.8
+  orthographic size: 10
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2

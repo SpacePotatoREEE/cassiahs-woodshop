@@ -5,12 +5,12 @@ using UnityEngine.SceneManagement;
 /// Persistent stats for the on‑foot player (PlayerHuman layer).
 /// Singleton + DontDestroyOnLoad to ensure exactly one human exists.
 /// </summary>
-public class PlayerStatsHuman : MonoBehaviour
+public class PlayerStatsHuman : MonoBehaviour, IDamageable
 {
     /* ───────────────  SINGLETON  ─────────────── */
     public static PlayerStatsHuman Instance { get; private set; }
 
-    [Header("Player Health Settings")]
+    [Header("Player Health Settings")] 
     public float maxHealth = 100f;
     public float currentHealth;
 
@@ -21,6 +21,9 @@ public class PlayerStatsHuman : MonoBehaviour
 
     private void Awake()
     {
+        
+        Debug.Log($"[PlayerStatsHuman] Awake on {gameObject.name}, implements IDamageable: {this is IDamageable}");
+
         // Enforce a single human instance for the whole app.
         if (Instance != null && Instance != this)
         {
@@ -75,6 +78,11 @@ public class PlayerStatsHuman : MonoBehaviour
         {
             playerHealthBar.SetHealth(currentHealth);
         }
+    }
+    
+    public void ApplyDamage(int amount, Vector3 hitPoint, Vector3 hitNormal)
+    {
+        TakeDamage(amount); // reuse your existing method
     }
 
     private void Die()

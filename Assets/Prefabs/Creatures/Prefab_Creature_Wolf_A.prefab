@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &541668177326813062
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8509075806405456176}
+  m_Layer: 0
+  m_Name: FireMuzzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8509075806405456176
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541668177326813062}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.08, z: 0.58}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3633607142379631138}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1943799187898742090
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,7 +284,8 @@ GameObject:
   - component: {fileID: 7418874374174232881}
   - component: {fileID: 5629548142342217766}
   - component: {fileID: 8494947619476257623}
-  - component: {fileID: 4795394516702923734}
+  - component: {fileID: 3475382577599839882}
+  - component: {fileID: 1149587718593426264}
   m_Layer: 0
   m_Name: Prefab_Creature_Wolf_A
   m_TagString: Untagged
@@ -275,6 +307,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6154472471935548313}
+  - {fileID: 8509075806405456176}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5325448157424826782
@@ -385,7 +418,7 @@ MonoBehaviour:
   - Type: 6
     Base: 106
     Current: 0
---- !u!114 &4795394516702923734
+--- !u!114 &3475382577599839882
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -394,9 +427,44 @@ MonoBehaviour:
   m_GameObject: {fileID: 6401272275119518137}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebde742c30caf0e45a8b779437991120, type: 3}
+  m_Script: {fileID: 11500000, guid: 50de74c3f044ed445a39a74092297d2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  triggerRadius: 1
-  context: {fileID: 11400000, guid: 55848f5ad98bc874fba07a881812a835, type: 2}
-  battleSceneName: Battle_Template
+  aggroRadius: 18
+  deAggroRadius: 36
+  stopDistance: 6.26
+  moveSpeed: 2.5
+  useNavMesh: 1
+  requireLineOfSight: 0
+  losObstacles:
+    serializedVersion: 2
+    m_Bits: 8192
+--- !u!114 &1149587718593426264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6401272275119518137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9e0e8a65147ac74fad197828754ab67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orbColor: {r: 1, g: 0, b: 0, a: 1}
+  orbDamage: 5
+  orbSpeed: 8
+  orbRadius: 0.3
+  orbLifetime: 2
+  pattern: 2
+  fireInterval: 4
+  patternCount: 6
+  spreadAngle: 20
+  angularSpeed: 80
+  circleOffset: 0.2
+  fireMuzzle: {fileID: 8509075806405456176}
+  target: {fileID: 0}
+  leadTarget: 0
+  spawnHeightOffset: 0
+  spawnForwardOffset: 0
+  debugLogs: 1

@@ -303,6 +303,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6378570094967568976}
   - component: {fileID: 807227103934090709}
+  - component: {fileID: 1638211382491758039}
+  - component: {fileID: 4722248852025627209}
   - component: {fileID: 1661312853037674806}
   - component: {fileID: 4888234287140122945}
   - component: {fileID: 621687498683392467}
@@ -343,9 +345,72 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 173b8bbe43444444c8257182b55a67d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 100
+  maxHealth: 500
+  currentHealth: 500
   playerHealthBar: {fileID: 0}
+--- !u!114 &1638211382491758039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7176102831033558989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3407e57bf7fd3564db5424a9b6adfbc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerStatsComponent: {fileID: 807227103934090709}
+--- !u!114 &4722248852025627209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7176102831033558989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e961883239e1b644a9727631416d4f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  invulnerabilityDuration: 1.2
+  blinkCount: 6
+  whiteFlashDuration: 0.15
+  redTintDuration: 1
+  flashCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.9000015
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  whiteFlashColor: {r: 1, g: 1, b: 1, a: 1}
+  redTintColor: {r: 1, g: 0.3, b: 0.3, a: 1}
+  useEmission: 1
+  whiteEmissionIntensity: 1
+  redEmissionIntensity: 1
+  albedoWhiteStrength: 0.6
+  albedoRedStrength: 0.4
+  shakeAmplitude: 0.2
+  shakeFrequency: 70
+  shakeDuration: 1
 --- !u!143 &1661312853037674806
 CharacterController:
   m_ObjectHideFlags: 0

@@ -193,10 +193,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d393c77410924154c9f338ce8779f9c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  planetLandingUI: {fileID: 856938053095591608}
   planetSceneName: Planet_A
-  layerTriggerString: PlayerShip
-  fullHealOnLanding: 1
+  requiredTag: Player
 --- !u!1 &3104159598341502198
 GameObject:
   m_ObjectHideFlags: 0

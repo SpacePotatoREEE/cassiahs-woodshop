@@ -1473,7 +1473,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 12279
+    m_Bits: 110583
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1950,7 +1950,7 @@ Transform:
   m_GameObject: {fileID: 8280711440852076402}
   serializedVersion: 2
   m_LocalRotation: {x: 0.30769137, y: 0.012594789, z: 0.005642187, w: 0.95138615}
-  m_LocalPosition: {x: 114.58383, y: 48.218018, z: -0.87926865}
+  m_LocalPosition: {x: 114.68063, y: 58.238586, z: -1.8947203}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2249,6 +2249,10 @@ PrefabInstance:
       propertyPath: shakeCurve.m_Curve.Array.data[2].outWeight
       value: 0.33333334
       objectReference: {fileID: 0}
+    - target: {fileID: 5818487877895552315, guid: 3cf5912de117b6f439e9614653401262, type: 3}
+      propertyPath: aimCamera
+      value: 
+      objectReference: {fileID: 1905068339}
     - target: {fileID: 6378570094967568976, guid: 3cf5912de117b6f439e9614653401262, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

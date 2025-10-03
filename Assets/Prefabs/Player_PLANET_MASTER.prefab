@@ -309,6 +309,9 @@ GameObject:
   - component: {fileID: 4888234287140122945}
   - component: {fileID: 621687498683392467}
   - component: {fileID: 2170724308712440580}
+  - component: {fileID: 4773141316810123253}
+  - component: {fileID: 5818487877895552315}
+  - component: {fileID: 7835425144814180711}
   m_Layer: 10
   m_Name: Player_PLANET_MASTER
   m_TagString: Untagged
@@ -348,6 +351,8 @@ MonoBehaviour:
   maxHealth: 500
   currentHealth: 500
   playerHealthBar: {fileID: 0}
+  aimPoint: {fileID: 0}
+  hitEffects: {fileID: 0}
 --- !u!114 &1638211382491758039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -361,6 +366,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStatsComponent: {fileID: 807227103934090709}
+  aimPoint: {fileID: 0}
+  respectIFrames: 1
 --- !u!114 &4722248852025627209
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -449,10 +456,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 3
-  runSpeed: 6.5
-  acceleration: 5
+  runSpeed: 8
+  acceleration: 10
   deceleration: 10
-  rotationSpeed: 20
+  rotationSpeed: 30
   walkToRunThreshold: 0.5
   maxSlopeAngle: 45
   slideSpeed: 5
@@ -466,7 +473,7 @@ MonoBehaviour:
   groundCheckDistance: 0.15
   terrainLayer:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 106496
   animatorOverride: {fileID: 0}
   animationSpeedSmoothTime: 0.1
   minAnimationSpeed: 0.01
@@ -477,7 +484,7 @@ MonoBehaviour:
   groundedParamName: Grounded
   jumpTriggerName: Jump
   postJumpGroundLock: 0.08
-  airControlPercent: 0.3
+  airControlPercent: 0.785
   coyoteTime: 0.12
   jumpBufferTime: 0.12
 --- !u!114 &621687498683392467
@@ -540,6 +547,62 @@ MonoBehaviour:
     m_Bits: 8192
   groundProbeUpOffset: 0.1
   playerInputOverride: {fileID: 0}
+--- !u!114 &4773141316810123253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7176102831033558989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6088ad8d23bbc04c8c93be463683d0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  owner: {fileID: 2936008661336493273}
+  ringRadius: 2.5
+  ringHeightOffset: 0.8
+  active: []
+  storage: []
+--- !u!114 &5818487877895552315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7176102831033558989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7a7e0e8b1de30143b671d37905323cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aimCamera: {fileID: 0}
+  capturableMask:
+    serializedVersion: 2
+    m_Bits: 32768
+  captureBallPrefab: {fileID: 2908878418577629194, guid: 83e4c3021970fb249bdc0dd12b1b186d, type: 3}
+  companionRoster: {fileID: 4773141316810123253}
+  aimMaxDistance: 30
+  aimSphereRadius: 0.6
+  captureKey: 99
+  rightMouseCaptures: 1
+  logWhyItDidntThrow: 1
+  playerInput: {fileID: 0}
+  captureActionName: Capture
+--- !u!114 &7835425144814180711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7176102831033558989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4fe751d76ebae945b7346abd2fc333a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gravity: 12
+  maxUpVelocity: 20
 --- !u!1 &8348225609690128615
 GameObject:
   m_ObjectHideFlags: 0

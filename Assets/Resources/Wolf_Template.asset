@@ -18,22 +18,22 @@ MonoBehaviour:
   GroundSpawnOffset: 0.5
   BaseStats:
   - Stat: 0
-    Flat: 100
-    Percent: 100
+    Flat: 20
+    Percent: 1
   - Stat: 1
     Flat: 10
-    Percent: 100
+    Percent: 1
   - Stat: 2
     Flat: 5
-    Percent: 100
+    Percent: 1
   - Stat: 3
     Flat: 5
-    Percent: 100
+    Percent: 1
   - Stat: 4
-    Flat: 10
-    Percent: 100
+    Flat: 0
+    Percent: 0
   - Stat: 5
-    Flat: 100
+    Flat: 1
     Percent: 100
   - Stat: 6
     Flat: 1

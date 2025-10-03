@@ -36,5 +36,5 @@ EditorBuildSettings:
     path: Assets/Scenes/Space_Uninhabited_Empty_D.unity
     guid: 550ba68af8f3a0f4e8d13cfcdbe28e80
   m_configObjects:
-    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: d5b24172cd263914ea4ad6e2d401edbe, type: 3}
   m_UseUCBPForAssetBundles: 0
